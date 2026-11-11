@@ -33,6 +33,8 @@ Add a Mermaid flow diagram that illustrates `SDLC.md` § Routes, and link it fro
 
 ## Progress
 
+PR: #22
+
 > Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles.
 
 ### Phase 1: diagram
