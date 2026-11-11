@@ -1,4 +1,5 @@
 # Issue-First SDLC Adaptation (OM)
+> ⚠️ Superseded by `.ai/specs/2026-11-11-remove-phased-direct-route.md` (2026-11-11) — sections: Route table. Current state: see the new spec.
 
 Status: Accepted
 Source issue: #1
