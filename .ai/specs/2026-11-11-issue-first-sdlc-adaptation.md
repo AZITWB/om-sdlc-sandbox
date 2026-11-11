@@ -1,6 +1,7 @@
 # Issue-First SDLC Adaptation (OM)
 
 Status: Draft
+Source issue: #1
 Source brief: `.ai/specs/briefs/2026-11-11-issue-first-sdlc.md` (decisions D1–D18)
 Analysis: `.ai/analysis/2026-11-11-issue-first-sdlc-analysis.md`
 Reviews:
