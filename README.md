@@ -4,7 +4,7 @@ A process sandbox for the Open Mercato agent skills, the pipeline configuration 
 
 ## Contributing
 
-Work here is issue-first: every issue takes a route chosen by its category.
+Work here is issue-first: every change starts from an issue, and the issue's category chooses its route. Only a trivial change skips the issue.
 
 - [§ Routes](SDLC.md#routes): which commands each issue category goes through, and what must be ready before each one.
 - [§ Categories](SDLC.md#categories): which category label fits your issue.
