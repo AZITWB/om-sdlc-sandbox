@@ -59,6 +59,7 @@ flowchart TD
     classDef human fill:#fff3cd,stroke:#b8860b,color:#000
     classDef cmd fill:#e7f1ff,stroke:#3b6fb6,color:#000
     class trivialQ,confirm,ideaQ,sizeQ,accept,deliveryQ,backlogOk,merge human
+    class trivialRun,brainstorm,intake,bugRun,assignTask,taskRun,largeNote,specPR,backlogDry,backlogRun,directComment,directRun,assignItem,startRun cmd
 ```
 
 **Do not use** (from § Routes):
