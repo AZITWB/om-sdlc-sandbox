@@ -2,7 +2,7 @@
 
 Status: Draft
 Source issue: #1
-Source brief: `.ai/specs/briefs/2026-11-11-issue-first-sdlc.md` (decisions D1–D18)
+Source brief: `.ai/specs/briefs/2026-11-11-issue-first-sdlc.md` (decisions D1–D19)
 Analysis: `.ai/analysis/2026-11-11-issue-first-sdlc-analysis.md`
 Reviews:
 - `.ai/analysis/2026-11-11-issue-first-sdlc-spec-review.md` (gate-enforcing draft);
@@ -316,7 +316,9 @@ The native text names the `om-auto-fix-issue` feature-route stop as enforcement.
   3. Run `om-open-pr <n> documentation --draft` in the same session, so that its previous-step summary exists (`:60`). For a spec-only PR it writes `Refs #<n>` (`om-open-pr/references/pr-body-template.md:51-52`).
   4. Mark the PR ready before merge.
 - The `om-spec-writing` template writes no `Status:` line. The human adds `Status: Draft` when opening the spec PR, and changes it to `Accepted` before merge.
-- Automation never writes or changes `Status:`. Under the human's own GitHub login, "set by a human" cannot be verified. This is an accepted limit (D12).
+- Automation never sets `Status:` on its own initiative, and never inside a review autofix.
+- **Acceptance on explicit instruction (D19).** An agent may write `Status: Accepted` only when a human explicitly instructs it. The change goes on its own PR (for example through `om-open-pr`). That PR changes only the `Status:` line and records the instruction in its body. The human's merge of that PR is the acceptance. This PR is also the repair path when a spec PR merged without the status line.
+- Under the human's own GitHub login, "set by a human" or "instructed by a human" cannot be verified. This is an accepted limit (D12).
 
 ### Milestones (to be written into `SDLC.md`)
 
@@ -356,7 +358,8 @@ No new label, field, or stored state. One existing config value changes: `autofi
 | `om-backlog` on a spec source once the Definition of Ready exists | It applies the whole ticket-level tier and has no waiver (`om-backlog/SKILL.md:28`). | D16. This spec complies. F6 re-runs the check in a fresh context. |
 | `om-backlog` on a `Draft` spec | It does not read `Status:` and would file the tree. | Convention (D10): backlog only after acceptance. |
 | A spec PR merges without `Status: Accepted` | Nothing enforces it (D12). | `CODE_REVIEW.md`: "awaiting human acceptance". |
-| The review autofix writes `Status: Accepted` | `om-auto-review-pr` autofixes PRs by `$CURRENT_USER` (`SKILL.md:73`) and edits spec documents (`:80`). | The check is worded as human-only and never fixable. An agent commit that adds or changes `Status:` is a Blocker. |
+| The review autofix writes `Status: Accepted` | `om-auto-review-pr` autofixes PRs by `$CURRENT_USER` (`SKILL.md:73`) and edits spec documents (`:80`). | The check is worded as never fixable. An agent commit that adds or changes `Status:` is a Blocker, unless it is a D19 acceptance PR. |
+| A spec PR merges without `Status: Accepted` (happened with PR #3) | Design acceptance is incomplete, and the spec on `main` reads `Draft`. | A D19 acceptance PR before any backlog or implementation step. |
 | `automerge` on a spec or process PR | With `prepare-and-merge`, the label is the only human act before merge. | Convention: never on spec or process PRs. |
 | A two-run race on one item | `om-auto-create-pr` claims only its PR. | The human assigns the issue to themselves first. |
 | `jq` missing | Every OM skill fails at config loading. | Prerequisite in `AGENTS.md`. |
@@ -428,7 +431,7 @@ The phases must merge in order: Phase 2 needs Phase 1 in place. Per § Routes, t
 5. **Extensions.** Write the four `.ai/skills/<skill>/SKILL.md` files: the common header, then Extension A (`om-prepare-issue` and `om-auto-manage-issues` only), then the Extension B shared rules and that file's location block. *Check:* each file contains only those blocks, and none relaxes a native rule (review against `CODE_REVIEW.md`).
 6. **Config C.** Re-run `om-setup-agent-pipeline` and add the five labels to `autofix.eligibility.excludeLabels`. *Check:* the validation gate is green, and the config matches § Routes.
 7. **`CODE_REVIEW.md` § Repo-specific checks:**
-   - "A spec PR without `Status: Accepted` is awaiting human acceptance. That is never a fixable finding. Automation never adds or changes the line. An agent commit that adds or changes `Status:` is a Blocker."
+   - "A spec PR without `Status: Accepted` is awaiting human acceptance. That is never a fixable finding. Automation never adds or changes the line on its own initiative. An agent commit that adds or changes `Status:` is a Blocker, unless it is on a D19 acceptance PR: a PR that changes only the `Status:` line and records the human's instruction in its body."
    - "A spec PR uses `Refs #<n>`, never a closing keyword."
    - "A PR implementing a backlog item or a small task contains `Closes #<n>` and changes only that issue's scope."
 
