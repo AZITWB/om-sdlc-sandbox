@@ -62,7 +62,7 @@ It also records D20, the phased direct route, which this spec now uses instead o
 - [x] 1.4 SDLC.md Trivial changes — d7683df
 - [x] 1.5 Reconcile existing SDLC.md text — c82cfc0
 - [x] 1.6 Skill extensions — 9b4d540
-- [ ] 1.7 Autofix config exclusions
+- [x] 1.7 Autofix config exclusions — 3aa4b31
 - [ ] 1.8 CODE_REVIEW.md checks
 - [ ] 1.9 AGENTS.md pointer
 - [ ] 1.10 Archive the Delta
