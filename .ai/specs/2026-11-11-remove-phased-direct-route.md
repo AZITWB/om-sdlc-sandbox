@@ -1,6 +1,6 @@
 # Remove the non-native phased direct route (D20)
 
-Status: Draft
+Status: Accepted
 Source issue: #19
 Supersedes: `.ai/specs/2026-11-11-issue-first-sdlc-adaptation.md` — sections: Route table (rules "Direct route means one PR" and "Phased direct route (D20)")
 
