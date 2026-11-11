@@ -36,6 +36,8 @@ Record the Phase 2 verification (fixtures F1–F10) of the Issue-First SDLC proc
 
 ## Progress
 
+PR: #18
+
 > Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles.
 
 ### Phase 2: verification
