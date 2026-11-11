@@ -37,5 +37,5 @@ Add a Mermaid flow diagram that illustrates `SDLC.md` § Routes, and link it fro
 
 ### Phase 1: diagram
 
-- [ ] 1.1 Write the route diagram
+- [x] 1.1 Write the route diagram — 0b4a425
 - [ ] 1.2 Link it from SDLC.md
