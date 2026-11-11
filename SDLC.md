@@ -165,6 +165,20 @@ A spec is accepted when a human sets `Status: Accepted` in it and merges the des
    - **Direct:** the PR from `om-auto-implement-spec <n>` closes the source issue on merge.
    - **Phased direct:** the last phase PR closes the source issue on merge.
 
+## Trivial changes
+
+A trivial change may skip the issue and go straight to `om-auto-create-pr`, with `skip-qa` (§ Routes). A change is trivial when it is one of:
+- a typo or wording fix in docs;
+- a one-line config value with no behavior effect.
+
+These are never trivial:
+- config gates and labels;
+- the routes in this file;
+- `.ai/skills/`;
+- surfaces listed in `BACKWARD_COMPATIBILITY.md`.
+
+Anything that does not clearly qualify needs an issue.
+
 ## Label state machine
 
 Pipeline labels are mutually exclusive: a PR carries at most one, and it names where the PR sits in the flow.
