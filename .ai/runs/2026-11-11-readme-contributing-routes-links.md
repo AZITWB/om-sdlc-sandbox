@@ -31,6 +31,8 @@ Implements backlog item #14 only. No `Source doc:` is set (operator instruction)
 
 ## Progress
 
+PR: #16
+
 > Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles.
 
 ### Phase 1: README Contributing links
