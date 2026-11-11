@@ -2,7 +2,7 @@
 
 Status: Accepted
 Source issue: #1
-Source brief: `.ai/specs/briefs/2026-11-11-issue-first-sdlc.md` (decisions D1–D19)
+Source brief: `.ai/specs/briefs/2026-11-11-issue-first-sdlc.md` (decisions D1–D20)
 Analysis: `.ai/analysis/2026-11-11-issue-first-sdlc-analysis.md`
 Reviews:
 - `.ai/analysis/2026-11-11-issue-first-sdlc-spec-review.md` (gate-enforcing draft);
@@ -266,7 +266,8 @@ Frozen by: none. This is agent-interpreted prose. The baseline is the five cited
 **Rules under the table:**
 - **Category at intake (D15).** `om-prepare-issue` labels the issue at creation, and triage never changes an existing label. The intake category is therefore provisional. In triage, the human confirms it, or re-categorizes in the GitHub UI by removing the label and adding the new one. Then re-run triage.
 - **Size (D9).** Small or large is the human's call in triage, using the OM-native criterion: the change is not small, local, and obvious from its description. The command they run records the decision. A large refactor, documentation, or chore gets no native spec-required comment, so the human writes one.
-- **Direct route means one PR.** `om-auto-implement-spec` ships the whole spec on one PR. A spec whose phases must merge one after another uses the backlog route.
+- **Direct route means one PR.** `om-auto-implement-spec` ships the whole spec on one PR. A spec whose phases must merge one after another uses either the backlog route or the phased direct route (D20).
+- **Phased direct route (D20).** The human runs one `om-auto-create-pr` per phase, with that phase's steps in the brief and no `--spec`. Intermediate phase PRs carry `Refs #<n>`. The last phase PR carries `Closes #<n>`. The phases run in order, each after the previous one merges.
 - **Brainstorm shortcuts (D18).** Ramps 3 and 5 of `om-brainstorm` start a spec or a PR without an issue. Use them only for trivial changes. Otherwise file the issue first with ramp 2.
 - **Claims.** `om-auto-create-pr` claims only its PR. Before starting a backlog item or a small task, the human assigns the issue to themselves, so that two runs do not take the same item.
 - **Autofix queue (D17).** The queue takes bugs only. The other categories are excluded by `autofix.eligibility.excludeLabels`.
@@ -382,7 +383,7 @@ No new label, field, or stored state. One existing config value changes: `autofi
 
 ## 📋 Phasing
 
-The phases must merge in order: Phase 2 needs Phase 1 in place. Per § Routes, this spec therefore uses the backlog route.
+The phases must merge in order: Phase 2 needs Phase 1 in place. Per § Routes, this spec therefore uses the phased direct route (D20). The backlog route was set aside as too heavy for a process change; it is still verified by fixture F7 on a throwaway spec.
 
 1. **Phase 1: process contract, categories, hints, and config.**
    - Content: `SDLC.md`, Extensions A and B, Config C, `CODE_REVIEW.md`, `AGENTS.md`, and the Delta archive.
@@ -403,13 +404,10 @@ The phases must merge in order: Phase 2 needs Phase 1 in place. Per § Routes, t
 0. **Prerequisite:** the pipeline setup (`c0c8f6e`, branch `chore/agent-pipeline-setup`) is merged into `main`. `om-auto-create-pr` worktrees branch from `origin/main`, and Phase 1 edits those files.
 1. A human files the source issue with `om-prepare-issue --no-spec`.
 2. The spec PR is opened by hand, per § Design acceptance. A human reviews it, sets `Status: Accepted`, and merges it.
-3. `om-backlog .ai/specs/2026-11-11-issue-first-sdlc-adaptation.md --dry-run` runs, then the human confirms, then the real run. This also serves as F6.
-   - Extension B is not in place yet, so these bodies carry native hints and no Start section.
-   - The human writes each item's brief from the backlog-item template.
-4. Items follow the backlog-item route in `Depends on` order:
-   - the Phase 1 PRs reference their items with `Closes`;
-   - the Phase 2 PR closes the last item;
-   - the human then closes the epics and the source issue (§ Milestones).
+3. **Phased direct route (D20):**
+   - Phase 1 ships via `om-auto-create-pr`, with the Phase 1 steps in the brief and no `--spec`. Its PR carries `Refs #1`.
+   - After it merges, Phase 2 ships the same way, and its PR carries `Closes #1`.
+   - F6 (`om-backlog <this spec> --dry-run`, in a fresh context) still runs in Phase 2 as a readiness check. No backlog is filed for this spec.
 
 ### Phase 1: process contract, categories, hints, and config
 
@@ -450,7 +448,7 @@ Test issues are filed by a human, prefixed `[test]`, and closed afterwards. Test
 | F3 | An issue filed by hand without labels: "tidy .gitignore" | `om-auto-manage-issues <n> --dry-run` | category `chore`; `READY_STATUS` `ready` or `not-ready`, never `n/a` |
 | F4 | "bump agent-browser to the latest version" | `om-prepare-issue --no-spec` | `dependencies`, not `chore` |
 | F5 | A bug issue with no expected outcome | `om-auto-manage-issues <n>` | the not-ready comment names the outcome and ends with the Extension B ⛔ line; the prep notes say `Next: om-auto-fix-issue <n>` |
-| F6 | This spec | `om-backlog <this spec> --dry-run`, in a fresh context (bootstrap step 3) | readiness met; `Next: om-backlog <spec>` |
+| F6 | This spec | `om-backlog <this spec> --dry-run`, in a fresh context (readiness check only) | readiness met; `Next: om-backlog <spec>` |
 | F7 | A throwaway two-story spec meeting D16 (`.ai/specs/<date>-test-backlog.md`, deleted afterwards) | `om-backlog <spec>` (real run) | story and task bodies have `## ▶️ Start` with no spec path; the epic has none; `Next: none` |
 | F7a | Story 1 of F7 | its Start command | the PR contains `Closes #<story>`, touches only that story's scope, and has no `Source doc:` |
 | F8 | A brainstorm on a topic with an open `feature` issue, then one with no issue ("worth capturing, not now") | `om-brainstorm` | ramp 6 says `Next: om-auto-manage-issues <n>`; ramp 2 says `om-prepare-issue --no-spec …` |
