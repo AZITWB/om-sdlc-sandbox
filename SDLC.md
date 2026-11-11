@@ -59,7 +59,7 @@ Intake and triage learn `idea` and `chore` through the repo-local extensions of 
 
 ## Routes
 
-Work is issue-first: it starts from a categorized issue, except a trivial change. **[H]** marks a human decision or a command a human runs. Readiness never starts work; a human command does. "Triage" means `om-auto-manage-issues <n>`: implementation-prep notes are on by default for a single issue, and `--no-prep` turns them off.
+Work is issue-first: it starts from a categorized issue, except a trivial change. A flow diagram of these routes is in [`SDLC-routes.md`](SDLC-routes.md); this table stays the source of truth. **[H]** marks a human decision or a command a human runs. Readiness never starts work; a human command does. "Triage" means `om-auto-manage-issues <n>`: implementation-prep notes are on by default for a single issue, and `--no-prep` turns them off.
 
 | Category | Route (native commands) | Readiness before the next command | Do not use |
 |---|---|---|---|
