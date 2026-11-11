@@ -35,5 +35,5 @@ Implements backlog item #14 only. No `Source doc:` is set (operator instruction)
 
 ### Phase 1: README Contributing links
 
-- [ ] 1.1 Add README.md with Contributing section linking the routes and categories
-- [ ] 1.2 Verify anchors and run the validation gate
+- [x] 1.1 Add README.md with Contributing section linking the routes and categories — 5b61d47
+- [x] 1.2 Verify anchors and run the validation gate — 5b61d47 (anchors checked locally and in GitHub-rendered HTML: `user-content-routes`, `user-content-categories`; gate exit 0)
