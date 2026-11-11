@@ -104,6 +104,67 @@ The PR body must contain: Closes #<n>"
 
 Source: `.ai/specs/2026-11-11-issue-first-sdlc-adaptation.md` (decisions D1–D20 in `.ai/specs/briefs/2026-11-11-issue-first-sdlc.md`).
 
+## Definition of Ready
+
+A ticket is ready for implementation when the answers below are on the ticket or in a spec it links. They come in two tiers, because a spec can supply the second but never the first.
+
+**Ticket-level — only a human can supply these:**
+
+- the problem or need, and who has it (a user or a role);
+- the expected outcome, and how it will be checked;
+- what is out of scope;
+- open questions, each marked blocking or non-blocking — no blocking question left unanswered;
+- any autonomous assumption confirmed by a human (the resolved-assumptions comment on a spec PR).
+
+**Spec-level — a covering spec supplies these, and `om-auto-write-spec` writes them when they are missing:**
+
+- acceptance criteria;
+- business rules;
+- the happy path and the main unhappy paths;
+- impact on data and permissions;
+- dependencies;
+- a link to the prototype or mockups when the change is user-facing.
+
+For a bug, ready means reproducible: `om-verify-in-repo` is that gate, and the list above applies only to its ticket-level items. Enforcement: `om-prepare-issue` files tickets with these sections; `om-auto-manage-issues` records `READY_STATUS` per issue and posts a not-ready comment naming what is missing; `om-auto-fix-issue`'s feature route stops on a ticket that fails the ticket-level tier instead of speccing around the gap, the way `om-verify-in-repo` stops on a bug that is not real. Spec-level gaps are not a stop — the spec is authored. A maintainer may waive an item by saying so on the ticket. This section is what those skills read: a repository whose `SDLC.md` has no Definition of Ready gets no readiness check.
+
+The enforcement sentence above describes native behavior. § Routes decides which command to run.
+
+**Per-category minimums.** The ticket-level tier above applies to every category. These notes say what an item means for a category; they never remove an item.
+
+| Category | Ticket-level minimum (in addition to the tier above) |
+|---|---|
+| idea | Problem and who has it. An expected outcome is not needed to file, but it is what makes the idea actionable. |
+| feature | The tier in full. The spec supplies the spec-level tier. |
+| bug, security | Reproducible (`om-verify-in-repo`). The rest of the tier applies only to its ticket-level items. |
+| refactor, documentation, chore, dependencies | The tier in full. The expected outcome includes the size the human chose. |
+| spec, as an `om-backlog` source | The Problem Statement names who has the problem, with its source tier. Out-of-scope items name an owner role. The decisions it relies on are recorded. `om-backlog` has no waiver, so a spec must meet this before the backlog step. |
+
+The "ready as is" waiver applies to issues only, through `om-auto-manage-issues`.
+
+## Design acceptance
+
+A spec is accepted when a human sets `Status: Accepted` in it and merges the design-only spec PR into `main`. Who may approve and merge is decided by GitHub permissions and policies.
+
+- **Spec PR by agent:** `om-auto-write-spec <n>`. It opens a ready PR labeled `review`, `documentation`, and `skip-qa`, with `Refs #<n>`.
+- **Spec PR by hand** (after `om-spec-writing`):
+  1. Create a branch `docs/spec-<slug>` from `main`.
+  2. Keep only the spec, and its brief when there is one, in the working tree. `om-open-pr` runs `git add -A`.
+  3. Run `om-open-pr <n> documentation --draft` in the same session, so its previous-step summary exists. For a spec-only PR it writes `Refs #<n>`.
+  4. Mark the PR ready before merge.
+- The `om-spec-writing` template writes no `Status:` line. The human adds `Status: Draft` when opening the spec PR, and changes it to `Accepted` before merge.
+- Automation never sets `Status:` on its own initiative, and never inside a review autofix.
+- **Acceptance on explicit instruction.** An agent may write `Status: Accepted` only when a human explicitly instructs it. The change goes on its own PR, which changes only the `Status:` line and records the instruction in its body. The human's merge of that PR is the acceptance. This PR is also the repair path when a spec PR merged without the status line.
+- Under the human's own GitHub login, "set by a human" cannot be verified. This is an accepted limit of a convention-based process.
+
+## Milestones
+
+1. **Design accepted:** the spec PR is merged with `Status: Accepted`. The source issue stays open, because spec PRs use `Refs`.
+2. **Child items complete** (only when a backlog was chosen): every story and task of an epic is closed, and a human closes the epic.
+3. **Source complete:**
+   - **With a backlog:** every epic whose `Backlog source:` is the accepted spec's path is closed, and a human closes the source issue.
+   - **Direct:** the PR from `om-auto-implement-spec <n>` closes the source issue on merge.
+   - **Phased direct:** the last phase PR closes the source issue on merge.
+
 ## Label state machine
 
 Pipeline labels are mutually exclusive: a PR carries at most one, and it names where the PR sits in the flow.
