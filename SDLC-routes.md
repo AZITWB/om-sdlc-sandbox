@@ -20,6 +20,7 @@ flowchart TD
     brainstorm --> intake("om-prepare-issue --no-spec")
     intake --> triage["Triage: om-auto-manage-issues<br/>labels, readiness, prep notes"]
     triage --> confirm{{"Confirm the category,<br/>or re-categorize in GitHub and re-run triage"}}
+    triage -.- prepNote["For an idea, run triage with --no-prep"]
 
     confirm -- idea --> ideaQ{{"Re-categorize or close"}}
     ideaQ -- re-categorize --> confirm
