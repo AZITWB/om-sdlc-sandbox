@@ -58,7 +58,7 @@ It also records D20, the phased direct route, which this spec now uses instead o
 
 - [x] 1.1 Record D20 and switch the bootstrap — 34b4ab5
 - [x] 1.2 SDLC.md Categories and Routes — 6772343
-- [ ] 1.3 SDLC.md Definition of Ready, Design acceptance, Milestones
+- [x] 1.3 SDLC.md Definition of Ready, Design acceptance, Milestones — d6734c4
 - [ ] 1.4 SDLC.md Trivial changes
 - [ ] 1.5 Reconcile existing SDLC.md text
 - [ ] 1.6 Skill extensions
