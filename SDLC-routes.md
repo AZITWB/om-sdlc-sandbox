@@ -38,7 +38,7 @@ flowchart TD
 
     confirm -- feature --> specPR("Spec PR: om-auto-write-spec n,<br/>or om-spec-writing + om-open-pr, with Refs")
     specPR --> accept{{"Set Status: Accepted and merge the spec PR"}}
-    accept --> deliveryQ{{"Delivery: backlog, direct, or phased direct?"}}
+    accept --> deliveryQ{{"Delivery: backlog or direct?"}}
 
     deliveryQ -- backlog --> backlogDry("om-backlog spec --dry-run")
     backlogDry --> backlogOk{{"Confirm the tree"}}
@@ -48,9 +48,6 @@ flowchart TD
     deliveryQ -- direct --> directComment("Comment Accepted spec: path on the issue")
     directComment --> directRun("om-auto-implement-spec n")
     directRun --> pr
-
-    deliveryQ -- "phased direct" --> phaseRun("om-auto-create-pr per phase, no --spec<br/>intermediate PRs Refs, last PR Closes")
-    phaseRun --> pr
 
     item["Backlog item: story or task"] --> assignItem("Assign yourself")
     assignItem --> startRun("Run the command in the item's Start section,<br/>in Depends on order")
@@ -62,7 +59,6 @@ flowchart TD
     classDef human fill:#fff3cd,stroke:#b8860b,color:#000
     classDef cmd fill:#e7f1ff,stroke:#3b6fb6,color:#000
     class trivialQ,confirm,ideaQ,sizeQ,accept,deliveryQ,backlogOk,merge human
-    class trivialRun,brainstorm,intake,bugRun,assignTask,taskRun,largeNote,specPR,backlogDry,backlogRun,directComment,directRun,phaseRun,assignItem,startRun cmd
 ```
 
 **Do not use** (from § Routes):
