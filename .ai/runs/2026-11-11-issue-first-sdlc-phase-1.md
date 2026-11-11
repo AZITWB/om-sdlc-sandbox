@@ -57,7 +57,7 @@ It also records D20, the phased direct route, which this spec now uses instead o
 ### Phase 1: process contract
 
 - [x] 1.1 Record D20 and switch the bootstrap — 34b4ab5
-- [ ] 1.2 SDLC.md Categories and Routes
+- [x] 1.2 SDLC.md Categories and Routes — 6772343
 - [ ] 1.3 SDLC.md Definition of Ready, Design acceptance, Milestones
 - [ ] 1.4 SDLC.md Trivial changes
 - [ ] 1.5 Reconcile existing SDLC.md text
