@@ -64,7 +64,7 @@ Work is issue-first: it starts from a categorized issue, except a trivial change
 | Category | Route (native commands) | Readiness before the next command | Do not use |
 |---|---|---|---|
 | **idea** | **[H]** optional `om-brainstorm` → **[H]** `om-prepare-issue --no-spec "<goal> — brief: <path>"` → triage with `--no-prep` → **[H]** re-categorize (then re-run triage) or close | not checked for start: an idea starts no work. The not-ready comment lists what it needs to become actionable. | any spec or implementation command |
-| **feature** | **[H]** `om-prepare-issue --no-spec` → triage → **[H]** spec PR (§ Design acceptance) → **[H]** `Status: Accepted` + merge → **[H]** choose one: **backlog** (`om-backlog <spec> --dry-run`, confirm, `om-backlog <spec>`, commit `backlog.md`, then items), **direct** (comment `Accepted spec: <path>` on the issue, then `om-auto-implement-spec <n>`), or **phased direct** (one `om-auto-create-pr` per phase, see below) | issue `ready` before the spec step; spec backlog-ready (§ Definition of Ready) before `om-backlog` | `om-auto-fix-issue` (chains spec into implementation); `om-prepare-issue` without `--no-spec`; triage with `--write-missing-specs` |
+| **feature** | **[H]** `om-prepare-issue --no-spec` → triage → **[H]** spec PR (§ Design acceptance) → **[H]** `Status: Accepted` + merge → **[H]** choose one: **backlog** (`om-backlog <spec> --dry-run`, confirm, `om-backlog <spec>`, commit `backlog.md`, then items) or **direct** (comment `Accepted spec: <path>` on the issue, then `om-auto-implement-spec <n>`) | issue `ready` before the spec step; spec backlog-ready (§ Definition of Ready) before `om-backlog` | `om-auto-fix-issue` (chains spec into implementation); `om-prepare-issue` without `--no-spec`; triage with `--write-missing-specs` |
 | **backlog item** (story or task from `om-backlog`) | **[H]** assign yourself → **[H]** run the command in the item's `## ▶️ Start` section (the backlog-item brief), in `Depends on` order → review → **[H]** merge. GitHub closes the item through `Closes #<item>`. | the item carries acceptance criteria and its parent spec | `om-auto-fix-issue`, `om-auto-implement-spec`, `om-auto-create-pr --spec`, or any brief naming the parent spec (each would implement the whole parent spec) |
 | **bug** (and **security**) | **[H]** `om-prepare-issue --no-spec` → triage → **[H]** `om-auto-fix-issue <n>` (native bug chain, opens the PR), or `om-fix-issue <n>` (staged), then **[H]** `om-open-pr <n> bug` in the emitted `WORKTREE` | reproducible: `om-verify-in-repo` inside the chain | — |
 | **refactor / documentation / chore** (and **dependencies**), small | **[H]** `om-prepare-issue --no-spec` → triage → **[H]** assign yourself → **[H]** `om-auto-create-pr` with the task brief template | issue `ready` | `om-auto-fix-issue` (runs the bug chain) |
@@ -74,8 +74,7 @@ Work is issue-first: it starts from a categorized issue, except a trivial change
 **Rules:**
 - **Category at intake.** `om-prepare-issue` labels the issue at creation, and triage never changes an existing label. In triage the human confirms the label, or re-categorizes in the GitHub UI by removing it and adding the new one. Then re-run triage.
 - **Size.** Small or large is the human's call in triage. The change is large when it is not small, local, and obvious from its description. The command the human runs records the decision. A large refactor, documentation, or chore gets no native spec-required comment, so the human writes one.
-- **Direct route means one PR.** `om-auto-implement-spec` ships the whole spec on one PR. A spec whose phases must merge one after another uses the backlog route or the phased direct route.
-- **Phased direct route.** The human runs one `om-auto-create-pr` per phase, with that phase's steps in the brief and no `--spec`. Intermediate phase PRs carry `Refs #<n>`, and the last phase PR carries `Closes #<n>`. Each phase starts after the previous one merges.
+- **Direct route means one PR.** `om-auto-implement-spec` ships the whole spec on one PR.
 - **Brainstorm shortcuts.** Ramps 3 and 5 of `om-brainstorm` start a spec or a PR without an issue. Use them only for trivial changes. Otherwise, file the issue first with ramp 2.
 - **Claims.** `om-auto-create-pr` claims only its PR. Before starting a backlog item or a small task, the human assigns the issue to themselves, so that two runs never take the same item.
 - **Autofix queue.** It takes triaged `bug` and `security` issues only (§ Human-confirmed issue autofix queue).
@@ -163,7 +162,6 @@ A spec is accepted when a human sets `Status: Accepted` in it and merges the des
 3. **Source complete:**
    - **With a backlog:** every epic whose `Backlog source:` is the accepted spec's path is closed, and a human closes the source issue.
    - **Direct:** the PR from `om-auto-implement-spec <n>` closes the source issue on merge.
-   - **Phased direct:** the last phase PR closes the source issue on merge.
 
 ## Trivial changes
 
