@@ -78,7 +78,7 @@ Work is issue-first: it starts from a categorized issue, except a trivial change
 - **Phased direct route.** The human runs one `om-auto-create-pr` per phase, with that phase's steps in the brief and no `--spec`. Intermediate phase PRs carry `Refs #<n>`, and the last phase PR carries `Closes #<n>`. Each phase starts after the previous one merges.
 - **Brainstorm shortcuts.** Ramps 3 and 5 of `om-brainstorm` start a spec or a PR without an issue. Use them only for trivial changes. Otherwise, file the issue first with ramp 2.
 - **Claims.** `om-auto-create-pr` claims only its PR. Before starting a backlog item or a small task, the human assigns the issue to themselves, so that two runs never take the same item.
-- **Autofix queue.** It takes bugs only (§ Human-confirmed issue autofix queue).
+- **Autofix queue.** It takes triaged `bug` and `security` issues only (§ Human-confirmed issue autofix queue).
 - **`backlog.md`.** `om-backlog` updates `.ai/specs/backlog.md` but does not commit it. The human commits it through the trivial path, or by hand on a docs branch.
 - **Next-step hints.** The repo-local extensions make the hints OM prints follow this table. When a hint and this table disagree, this table wins.
 
@@ -356,6 +356,8 @@ trigger the repository's existing worker; this skill does not install or invoke
 one. Implementation remains `om-auto-fix-issue` or the existing worker, with all
 normal specification, code-review, QA and CI gates unchanged.
 
-The queue takes bugs only. `idea`, `feature`, `refactor`, `documentation`, and
-`chore` are excluded through `autofix.eligibility.excludeLabels`, so the
-triage never proposes them. Those categories follow § Routes.
+The queue takes triaged `bug` and `security` issues only. `idea`, `feature`,
+`refactor`, `documentation`, `chore`, and `dependencies` are excluded through
+`autofix.eligibility.excludeLabels`, so the triage never proposes them; those
+categories follow § Routes. An issue with no category label has not been
+triaged yet: triage it first (§ Routes), and never confirm it into the queue.

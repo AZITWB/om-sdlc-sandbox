@@ -20,7 +20,7 @@
   "ci": { "maxWaitMinutes": 40 },
   "autofix": {
     "label": "cez-autofix",
-    "eligibility": { "lookbackDays": 30, "analyzeLimit": 100, "limit": 20, "excludeLabels": ["blocked", "do-not-fix", "idea", "feature", "refactor", "documentation", "chore"] }
+    "eligibility": { "lookbackDays": 30, "analyzeLimit": 100, "limit": 20, "excludeLabels": ["blocked", "do-not-fix", "idea", "feature", "refactor", "documentation", "chore", "dependencies"] }
   },
   "automerge": {
     "label": "automerge",
