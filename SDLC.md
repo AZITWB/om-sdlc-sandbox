@@ -6,7 +6,7 @@ This file documents how work flows from ticket to merged PR in this repository. 
 
 Work enters through two paths: a free-form task brief handed to an agent, or a filed ticket. Both converge on the same review loop, the same validation gate, and the same merge gates.
 
-Before intake, the work is shaped: `om-brainstorm` turns a single idea or question into a routing decision and a brief, and the spec skills (`om-spec-writing`, `om-auto-write-spec`) turn a feature into a design document before anything is built. Those steps feed the table below; they are not the ticket flow itself.
+Work is issue-first. `om-brainstorm` may shape a single idea or question into a routing decision and a brief before intake. Spec work comes after intake and triage: the spec skills (`om-spec-writing`, `om-auto-write-spec`) turn a triaged feature, or large refactor, documentation, or chore work, into a design document before anything is built. Which category takes which route is in § Routes.
 
 ## Roles
 
@@ -22,7 +22,7 @@ Before intake, the work is shaped: `om-brainstorm` turns a single idea or questi
 |---|---|---|---|
 | Discovery | An idea, question, or itch is talked through before any artifact exists: the problem is questioned, alternatives (including building nothing) are weighed, and the conversation ends in a routing decision — an answer, a filed ticket, a brief for a spec, or a direct change. | `om-brainstorm` or a human | Conversation routed; a brief written when the work continues |
 | Intake | A ticket or task brief is filed in GitHub with enough detail to act on: what is wrong or wanted, for whom, and what done looks like. `om-prepare-issue` files it with SDLC labels. | Anyone, `om-prepare-issue` | Ticket exists |
-| Triage | Confirm the issue is real, still unfixed on `main`, and not already claimed or covered by an open PR. Read-only; stops the chain cleanly when there is nothing to do. | `om-verify-in-repo` or a human | Confirmed actionable, or closed as no-action |
+| Triage | Every issue: `om-auto-manage-issues` applies missing labels, records readiness against the Definition of Ready, and posts its notes; the human confirms the category (or re-categorizes) and chooses the route in § Routes. For a bug, `om-verify-in-repo` inside the bug chain also confirms the issue is real, still unfixed on `main`, and not already claimed or covered by an open PR, and stops cleanly when there is nothing to do. | `om-auto-manage-issues` and a human; `om-verify-in-repo` for bugs | Category confirmed and route chosen, or closed as no-action |
 | Claim | The author claims the ticket so concurrent agents back off. See the claim protocol below. | `om-fix` / `om-auto-create-pr`, or a human | Claim visible on the ticket |
 | Design | For a user-facing change, the flow and its states are settled before the code exists: what the screen does when empty, loading, in error, and without permission, and what the change deliberately does not do. Detailed screens may be designed from the specification with repository components; only an accepted version becomes its `Prototype:` reference. A ticket that touches no UI skips this stage. | `om-ux-shape`, optionally `om-ux-design` when chosen, or a human designer | The flow and its states are decided, or the ticket is not user-facing |
 | Implement | Locate the minimal change surface (`om-root-cause`, read-only), then implement the change with regression tests and run the validation gate. Task briefs without a ticket go through `om-auto-create-pr`, which plans, implements phase by phase in an isolated worktree, and runs the same gate. | `om-root-cause` + `om-fix`, `om-auto-create-pr`, or a human author | Change complete, validation gate green |
@@ -355,3 +355,7 @@ assignees, rechecks current state and verifies label read-back. The label may
 trigger the repository's existing worker; this skill does not install or invoke
 one. Implementation remains `om-auto-fix-issue` or the existing worker, with all
 normal specification, code-review, QA and CI gates unchanged.
+
+The queue takes bugs only. `idea`, `feature`, `refactor`, `documentation`, and
+`chore` are excluded through `autofix.eligibility.excludeLabels`, so the
+triage never proposes them. Those categories follow § Routes.
