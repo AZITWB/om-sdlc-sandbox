@@ -17,6 +17,11 @@
 - `skills-lock.json` is not modified, except in a PR whose ticket is explicitly about skill installation.
 - Every route described in process docs names its human decision points and the skill (or human) that drives each step. A route that only skills can complete is a blocker.
 - Design acceptance, backlog publication, readiness, and implementation start stay separate decisions. A document that merges any two of them is a blocker.
+- A spec PR without `Status: Accepted` is awaiting human acceptance. That is never a fixable finding.
+  - Automation never adds or changes the line on its own initiative.
+  - An agent commit that adds or changes `Status:` is a Blocker. The one exception is a D19 acceptance PR: a PR that changes only the `Status:` line and records the human's instruction in its body.
+- A spec PR uses `Refs #<n>`, never a closing keyword.
+- A PR implementing a backlog item or a small task contains `Closes #<n>` and changes only that issue's scope.
 
 ## Severity
 
