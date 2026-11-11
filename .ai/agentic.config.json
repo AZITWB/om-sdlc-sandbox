@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "baseBranch": "auto",
+  "tracker": "github",
+  "browser": { "provider": "agent-browser" },
+  "validation": {
+    "commands": [
+      "node -e \"JSON.parse(require('fs').readFileSync('.ai/agentic.config.json','utf8'))\""
+    ]
+  },
+  "labels": {
+    "enabled": true,
+    "pipeline": ["review", "changes-requested", "qa", "qa-failed", "merge-queue", "blocked", "do-not-merge"],
+    "category": ["idea", "feature", "bug", "refactor", "documentation", "chore", "security", "dependencies"],
+    "meta": ["needs-qa", "skip-qa", "qa-approved", "qa-self-verified", "in-progress", "ci-monitoring", "claim-reset"],
+    "priority": ["priority-low", "priority-medium", "priority-high", "priority-extreme"],
+    "risk": ["risk-low", "risk-medium", "risk-high"]
+  },
+  "qaGate": true,
+  "ci": { "maxWaitMinutes": 40 },
+  "autofix": {
+    "label": "cez-autofix",
+    "eligibility": { "lookbackDays": 30, "analyzeLimit": 100, "limit": 20, "excludeLabels": ["blocked", "do-not-fix"] }
+  },
+  "automerge": {
+    "label": "automerge",
+    "mode": "prepare-and-merge",
+    "requireIndependentReview": false,
+    "defaultToHumanQa": false,
+    "humanOnlyLabels": [],
+    "humanOnlyAuthors": [],
+    "complexQa": "always",
+    "windowMinutes": 120,
+    "maxAttempts": 3
+  },
+  "engine": { "loopStepThreshold": 20, "executorTier": "standard", "stepReview": "final" },
+  "paths": {
+    "runs": ".ai/runs",
+    "analysis": ".ai/analysis",
+    "specs": ".ai/specs",
+    "dataModel": ".ai/data-model",
+    "prototypes": ".ai/prototypes",
+    "scripts": ".ai/scripts",
+    "qa": ".ai/qa"
+  },
+  "designTokens": null,
+  "reviewChecklist": null,
+  "agentHarness": null,
+  "closeKeywords": ["zamyka", "naprawia", "rozwiązuje"],
+  "prTitleTemplate": "{prefix}({area}): {summary}{issueRef}",
+  "ticketKeyPattern": ""
+}
