@@ -34,6 +34,76 @@ Before intake, the work is shaped: `om-brainstorm` turns a single idea or questi
 
 After merge, this process stops. Deployment, smoke tests, monitoring, and rollback belong to the repository's release process, not to this document: the Maintainer — or a release manager, when the team names one — drafts the changelog with `om-auto-update-changelog` and reconciles the tracker with `om-close-fixed-issues`, and `om-pipeline-retro` reads finished runs to rank what second passes cost. Merge is where this document ends; delivering the change to users is a separate process the team owns.
 
+## Categories
+
+Every issue carries exactly one category label. The intake category is provisional until a human confirms it in triage (§ Routes).
+
+| Category | Use it for |
+|---|---|
+| `idea` | An incomplete need whose outcome or approach is not decided ("maybe we need…", "explore whether…"). If the expected outcome is stated, it is a `feature`. An idea starts no work. |
+| `feature` | New capability with a decided outcome. It always goes through a spec. |
+| `bug` | Behavior that differs from what was intended. |
+| `refactor` | Restructuring code or skills, with no behavior change. |
+| `documentation` | A docs-only change. |
+| `chore` | Maintenance with no behavior change: tooling, configuration, CI, repository housekeeping. It is an issue category only, so a PR for chore work carries `refactor`, or `documentation` for a docs-only change. |
+| `security` | A vulnerability or hardening. It follows the bug route. |
+| `dependencies` | A third-party version bump. It follows the small-task route. |
+
+Tie-breakers:
+- A version bump of a third-party package is `dependencies`, not `chore`.
+- A docs-only change is `documentation`.
+- A restructuring is `refactor`.
+- When unsure between `idea` and another category, choose `idea`.
+
+Intake and triage learn `idea` and `chore` through the repo-local extensions of `om-prepare-issue` and `om-auto-manage-issues`.
+
+## Routes
+
+Work is issue-first: it starts from a categorized issue, except a trivial change. **[H]** marks a human decision or a command a human runs. Readiness never starts work; a human command does. "Triage" means `om-auto-manage-issues <n>`: implementation-prep notes are on by default for a single issue, and `--no-prep` turns them off.
+
+| Category | Route (native commands) | Readiness before the next command | Do not use |
+|---|---|---|---|
+| **idea** | **[H]** optional `om-brainstorm` → **[H]** `om-prepare-issue --no-spec "<goal> — brief: <path>"` → triage with `--no-prep` → **[H]** re-categorize (then re-run triage) or close | not checked for start: an idea starts no work. The not-ready comment lists what it needs to become actionable. | any spec or implementation command |
+| **feature** | **[H]** `om-prepare-issue --no-spec` → triage → **[H]** spec PR (§ Design acceptance) → **[H]** `Status: Accepted` + merge → **[H]** choose one: **backlog** (`om-backlog <spec> --dry-run`, confirm, `om-backlog <spec>`, commit `backlog.md`, then items), **direct** (comment `Accepted spec: <path>` on the issue, then `om-auto-implement-spec <n>`), or **phased direct** (one `om-auto-create-pr` per phase, see below) | issue `ready` before the spec step; spec backlog-ready (§ Definition of Ready) before `om-backlog` | `om-auto-fix-issue` (chains spec into implementation); `om-prepare-issue` without `--no-spec`; triage with `--write-missing-specs` |
+| **backlog item** (story or task from `om-backlog`) | **[H]** assign yourself → **[H]** run the command in the item's `## ▶️ Start` section (the backlog-item brief), in `Depends on` order → review → **[H]** merge. GitHub closes the item through `Closes #<item>`. | the item carries acceptance criteria and its parent spec | `om-auto-fix-issue`, `om-auto-implement-spec`, `om-auto-create-pr --spec`, or any brief naming the parent spec (each would implement the whole parent spec) |
+| **bug** (and **security**) | **[H]** `om-prepare-issue --no-spec` → triage → **[H]** `om-auto-fix-issue <n>` (native bug chain, opens the PR), or `om-fix-issue <n>` (staged), then **[H]** `om-open-pr <n> bug` in the emitted `WORKTREE` | reproducible: `om-verify-in-repo` inside the chain | — |
+| **refactor / documentation / chore** (and **dependencies**), small | **[H]** `om-prepare-issue --no-spec` → triage → **[H]** assign yourself → **[H]** `om-auto-create-pr` with the task brief template | issue `ready` | `om-auto-fix-issue` (runs the bug chain) |
+| **refactor / documentation / chore**, large | triage → **[H]** comment "needs a spec (large)" on the issue → as feature, from the spec PR onwards | as feature | as feature |
+| **trivial change** | **[H]** `om-auto-create-pr "<task>"` with no issue. The PR carries `documentation` or `refactor`, plus `skip-qa`. | — | — |
+
+**Rules:**
+- **Category at intake.** `om-prepare-issue` labels the issue at creation, and triage never changes an existing label. In triage the human confirms the label, or re-categorizes in the GitHub UI by removing it and adding the new one. Then re-run triage.
+- **Size.** Small or large is the human's call in triage. The change is large when it is not small, local, and obvious from its description. The command the human runs records the decision. A large refactor, documentation, or chore gets no native spec-required comment, so the human writes one.
+- **Direct route means one PR.** `om-auto-implement-spec` ships the whole spec on one PR. A spec whose phases must merge one after another uses the backlog route or the phased direct route.
+- **Phased direct route.** The human runs one `om-auto-create-pr` per phase, with that phase's steps in the brief and no `--spec`. Intermediate phase PRs carry `Refs #<n>`, and the last phase PR carries `Closes #<n>`. Each phase starts after the previous one merges.
+- **Brainstorm shortcuts.** Ramps 3 and 5 of `om-brainstorm` start a spec or a PR without an issue. Use them only for trivial changes. Otherwise, file the issue first with ramp 2.
+- **Claims.** `om-auto-create-pr` claims only its PR. Before starting a backlog item or a small task, the human assigns the issue to themselves, so that two runs never take the same item.
+- **Autofix queue.** It takes bugs only (§ Human-confirmed issue autofix queue).
+- **`backlog.md`.** `om-backlog` updates `.ai/specs/backlog.md` but does not commit it. The human commits it through the trivial path, or by hand on a docs branch.
+- **Next-step hints.** The repo-local extensions make the hints OM prints follow this table. When a hint and this table disagree, this table wins.
+
+**Backlog-item brief template.** `om-auto-create-pr` takes only a brief and cannot read the issue. A brief that names a spec makes it implement that spec. The brief therefore carries everything it needs and never names the parent spec. `om-backlog` writes this brief, filled in, into each story and task under `## ▶️ Start`:
+
+```text
+om-auto-create-pr "Implement backlog item #<n> (<id> — <title>) and only this item.
+Acceptance criteria (from #<n>):
+<criteria>
+Scope: this item only. Do not implement other items or the rest of the parent design, and do not set a Source doc.
+The PR body must contain: Closes #<n>"
+```
+
+**Task brief template** (small refactor, documentation, chore, or dependencies):
+
+```text
+om-auto-create-pr "Implement #<n> (<title>), small change, no spec.
+What is wanted and how it is checked (from #<n>):
+<problem, expected outcome, check>
+Out of scope: <from #<n>>
+The PR body must contain: Closes #<n>"
+```
+
+Source: `.ai/specs/2026-11-11-issue-first-sdlc-adaptation.md` (decisions D1–D20 in `.ai/specs/briefs/2026-11-11-issue-first-sdlc.md`).
+
 ## Label state machine
 
 Pipeline labels are mutually exclusive: a PR carries at most one, and it names where the PR sits in the flow.
