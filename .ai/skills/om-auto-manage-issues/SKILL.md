@@ -46,3 +46,5 @@ Shared rules:
 | `refactor`, `documentation`, `chore` | `Next: none` | "Small: `om-auto-create-pr` with the task brief template in `SDLC.md` § Routes. Large: comment 'needs a spec (large)' and follow the feature route." |
 | `idea` | `Next: none` | "A human re-categorizes or closes this idea." |
 | backlog item | `Next: none` | "Start it with the command in its body." |
+
+**Run report and batch table.** The installed skill says to hand a prepped issue to `om-auto-fix-issue`. Its run report's `Next:` line and the batch table's *Next action* column use the same per-category mapping as the implementation-prep comment above. They name `om-auto-fix-issue` only for `bug`, `security`, and `dependencies`.
