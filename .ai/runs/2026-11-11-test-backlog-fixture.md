@@ -33,6 +33,8 @@ A new contributor reaches `SDLC.md` § Routes from the repository root in one cl
 
 ## Progress
 
+PR: #17
+
 > Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles.
 
 ### Phase 1: README pointer
