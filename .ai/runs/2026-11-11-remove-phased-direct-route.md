@@ -34,6 +34,8 @@ Remove the non-native phased direct route (D20) from `SDLC.md` and `SDLC-routes.
 
 ## Progress
 
+PR: #26
+
 > Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles.
 
 ### Phase 1: remove the route
@@ -41,4 +43,4 @@ Remove the non-native phased direct route (D20) from `SDLC.md` and `SDLC-routes.
 - [x] 1.1 SDLC.md Routes and Milestones — 3dc68f2
 - [x] 1.2 SDLC-routes.md diagram — 51c19b7
 - [x] 1.3 Brief D20 and D10 — 4a84af3
-- [ ] 1.4 Repo-wide grep check
+- [x] 1.4 Repo-wide grep check — d174bba
