@@ -42,3 +42,4 @@ A new contributor reaches `SDLC.md` § Routes from the repository root in one cl
 ### Phase 2: Where-to-start table
 
 - [x] 2.1 Add the Where-to-start table — 4c964ff
+- [x] Post-review fix: README states that only a trivial change skips the issue — a8c543e
