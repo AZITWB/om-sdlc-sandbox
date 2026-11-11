@@ -40,7 +40,7 @@ Record the Phase 2 verification (fixtures F1–F10) of the Issue-First SDLC proc
 
 ### Phase 2: verification
 
-- [ ] 2.1 Exclude dependencies from the autofix queue
+- [x] 2.1 Exclude dependencies from the autofix queue — c2630a2
 - [ ] 2.2 Re-run F10
 - [ ] 2.3 Write the verification record
 - [ ] 2.4 Close test issues and remove local fixtures
