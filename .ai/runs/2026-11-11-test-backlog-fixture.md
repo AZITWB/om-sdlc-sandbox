@@ -37,7 +37,7 @@ A new contributor reaches `SDLC.md` § Routes from the repository root in one cl
 
 ### Phase 1: README pointer
 
-- [ ] 1.1 Create README.md with the overview and Contributing section
+- [x] 1.1 Create README.md with the overview and Contributing section — a810240
 
 ### Phase 2: Where-to-start table
 
