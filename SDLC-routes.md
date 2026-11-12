@@ -12,6 +12,7 @@ They illustrate [`SDLC.md`](SDLC.md), which is the source of truth. When a diagr
 - **Rounded box (blue):** a command a human runs. All **[H]** steps in § Routes are one of these two shapes.
 - **Plain box:** what a skill or GitHub does on its own.
 - **Slanted box (red):** a gate that blocks the merge until it passes.
+- **Diamond:** a branch that follows a label, not a new decision.
 
 The diagrams connect: the **PR** node of diagram 1 is where diagram 2 starts, and the **Spec PR** step of a user-facing feature is where diagram 3 happens.
 
@@ -92,7 +93,7 @@ flowchart TD
     vgate -- red --> impl
     vgate -- green --> review["Review: om-auto-review-pr<br/>om-code-review checklist + CODE_REVIEW.md"]
     review -- changes requested --> impl
-    review -- approved --> qaQ{{"User-facing behavior?<br/>needs-qa or skip-qa"}}
+    review -- approved --> qaQ{"PR label: needs-qa or skip-qa?<br/>set by the skill when the PR opens"}
 
     qaQ -- "skip-qa: docs, deps, CI, tests" --> merge
     qaQ -- needs-qa --> env("om-prepare-test-env: boot the app once")
@@ -109,7 +110,7 @@ flowchart TD
     classDef human fill:#fff3cd,stroke:#b8860b,color:#000
     classDef cmd fill:#e7f1ff,stroke:#3b6fb6,color:#000
     classDef gate fill:#fde2e1,stroke:#b42318,color:#000
-    class qaQ,signoff,merge human
+    class signoff,merge human
     class env,qaRun,after cmd
     class vgate,qaGate gate
 ```
