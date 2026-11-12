@@ -31,9 +31,11 @@ Add two diagrams to `SDLC-routes.md`: the PR path with tests and QA, and design 
 
 ## Progress
 
+PR: #28
+
 > Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles.
 
 ### Phase 1: diagrams
 
-- [ ] 1.1 Tests and QA diagram
-- [ ] 1.2 Design diagram
+- [x] 1.1 Tests and QA diagram — 2208aa6
+- [x] 1.2 Design diagram — 2208aa6
