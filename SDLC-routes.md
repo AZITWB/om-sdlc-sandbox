@@ -1,13 +1,23 @@
-# Issue routes: flow diagram
+# SDLC flow diagrams
 
-This diagram illustrates [`SDLC.md` § Routes](SDLC.md#routes). The table there is the source of truth: when the diagram and the table disagree, the table wins. Update this file whenever § Routes changes.
+Three small diagrams, each answering one question:
+1. **Routes:** which route does an issue take?
+2. **PR path:** where do tests and QA happen, from code to merge?
+3. **Design:** how does a user-facing change get designed?
 
-**Legend.** Each node shape has one meaning:
-- **Hexagon:** a human decision.
-- **Rounded box:** a command a human runs. All **[H]** steps in § Routes are one of these two shapes.
+They illustrate [`SDLC.md`](SDLC.md), which is the source of truth. When a diagram and `SDLC.md` disagree, `SDLC.md` wins. Update this file whenever the sections each diagram cites change.
+
+**Legend** (shared by all three):
+- **Hexagon (yellow):** a human decision.
+- **Rounded box (blue):** a command a human runs. All **[H]** steps in § Routes are one of these two shapes.
 - **Plain box:** what a skill or GitHub does on its own.
+- **Slanted box (red):** a gate that blocks the merge until it passes.
 
-Readiness never starts work. Before each human command, check the readiness column of § Routes.
+The diagrams connect: the **PR** node of diagram 1 is where diagram 2 starts, and the **Spec PR** step of a user-facing feature is where diagram 3 happens.
+
+## 1. Routes
+
+Source: [`SDLC.md` § Routes](SDLC.md#routes). Readiness never starts work: before each human command, check the readiness column of § Routes.
 
 ```mermaid
 flowchart TD
@@ -70,3 +80,65 @@ flowchart TD
 | feature | `om-auto-fix-issue`, `om-prepare-issue` without `--no-spec`, triage with `--write-missing-specs` |
 | backlog item | `om-auto-fix-issue`, `om-auto-implement-spec`, `om-auto-create-pr --spec`, or any brief naming the parent spec |
 | refactor, documentation, chore | `om-auto-fix-issue` |
+
+## 2. PR path: tests and QA
+
+Sources: [`SDLC.md` § Ticket lifecycle](SDLC.md#ticket-lifecycle) (rows Implement, Review loop, QA) and [§ The QA gate](SDLC.md#the-qa-gate).
+
+```mermaid
+flowchart TD
+    start([PR from a route in diagram 1]) --> impl["Implement with regression tests<br/>om-auto-create-pr or om-fix"]
+    impl --> vgate[/"Validation gate: validation.commands"/]
+    vgate -- red --> impl
+    vgate -- green --> review["Review: om-auto-review-pr<br/>om-code-review checklist + CODE_REVIEW.md"]
+    review -- changes requested --> impl
+    review -- approved --> qaQ{{"User-facing behavior?<br/>needs-qa or skip-qa"}}
+
+    qaQ -- "skip-qa: docs, deps, CI, tests" --> merge
+    qaQ -- needs-qa --> env("om-prepare-test-env: boot the app once")
+    env --> qaRun("om-auto-qa-pr: real browser,<br/>screenshots, pass/fail report")
+    qaRun -.- keep["A flow worth keeping becomes<br/>om-integration-tests coverage"]
+    qaRun --> signoff{{"QA reviewer decides<br/>self-QA only on risk-low or risk-medium"}}
+    signoff -- fail --> failed["qa-failed: back to the author"]
+    failed --> impl
+    signoff -- pass --> approved["qa-approved + QA head: sha<br/>a later push stales it"]
+    approved --> qaGate[/"QA gate: needs-qa merges only with qa-approved"/]
+    qaGate --> merge{{"Merge: om-approve-merge-pr or a human<br/>blocked by qa-failed, blocked, do-not-merge"}}
+    merge --> after("Optional after merge: om-auto-qa-scenarios<br/>manual QA scenarios for testers")
+
+    classDef human fill:#fff3cd,stroke:#b8860b,color:#000
+    classDef cmd fill:#e7f1ff,stroke:#3b6fb6,color:#000
+    classDef gate fill:#fde2e1,stroke:#b42318,color:#000
+    class qaQ,signoff,merge human
+    class env,qaRun,after cmd
+    class vgate,qaGate gate
+```
+
+## 3. Design for user-facing changes
+
+Sources: [`SDLC.md` § Ticket lifecycle](SDLC.md#ticket-lifecycle) (rows Design, Review loop), [§ The QA gate](SDLC.md#the-qa-gate) (the UI bullet), and [§ Amending this process](SDLC.md#amending-this-process) (`om-ux-setup`).
+
+```mermaid
+flowchart TD
+    uiQ{{"Does the change touch UI?"}} -- no --> skipD["Skip the Design stage"]
+    uiQ -- yes --> shape("om-ux-shape: flow and states<br/>empty, loading, error, no permission")
+    shape --> detailQ{{"Detailed screens wanted?"}}
+    detailQ -- yes --> uxd("om-ux-design from the spec,<br/>or om-figma-design-with-ds")
+    uxd --> acceptD{{"Accept one design version"}}
+    acceptD --> proto["The accepted version becomes<br/>Prototype: in the spec"]
+    detailQ -- no --> flowOnly["The flow and its states are recorded in the spec"]
+    proto --> implD["Implement: diagram 2"]
+    flowOnly --> implD
+    implD --> uxReview("om-ux-review-pr: design pass on changed screens<br/>advisory, does not hold the merge")
+    uxReview --> qaD[/"QA: state matrix and design contract (.uxproof/)<br/>a missing state fails QA"/]
+
+    setup("Once per repo: om-ux-setup<br/>extracts the design contract") -.-> shape
+    setup -.-> qaD
+
+    classDef human fill:#fff3cd,stroke:#b8860b,color:#000
+    classDef cmd fill:#e7f1ff,stroke:#3b6fb6,color:#000
+    classDef gate fill:#fde2e1,stroke:#b42318,color:#000
+    class uiQ,detailQ,acceptD human
+    class shape,uxd,uxReview,setup cmd
+    class qaD gate
+```
