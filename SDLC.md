@@ -231,7 +231,7 @@ Two labels live outside this taxonomy, and only humans decide them (the automerg
 
   On its first visit to a PR, when no signal is recorded yet, the buddy derives the initial signals from the PR's real state: its labels, reviews and comments, and its CI checks on the current head. It then starts from the first signal still missing, so review, QA or CI work already done is not repeated. A missing signal is produced by `om-auto-review-pr --autofix`, `om-auto-qa-pr`, or `om-auto-fix-pr`, each run with `--orchestrated` so the buddy alone owns the claim and the labels. CI that is still running is parked under `ci-monitoring` and checked again later. A PR that cannot be fixed within the attempt limit is parked under `automerge-blocked`; remove that label to retry. A fork PR is carried forward to a credited replacement that keeps the label. In `prepare-to-merge` mode, a PR with all three signals gets `merge-queue`. In `prepare-and-merge` mode (the missing-config default) it is squash-merged, bypassing other labels and host merge rules, because the three signals are the gate. Removing `automerge` stops the automation.
 
-- Never apply `automerge` to a spec PR or a process PR (one that changes `SDLC.md`, `SDLC-routes.md`, `.ai/skills/`, `.ai/agentic.config.json`, or `.ai/trackers/`). Design acceptance and process changes need a human merge. `om-auto-merge-triage` must not propose them. Maintainer decision, #35.
+  Never apply `automerge` to a spec PR or a process PR (one that changes `SDLC.md`, `SDLC-routes.md`, `.ai/skills/`, `.ai/agentic.config.json`, `.ai/trackers/`, the repo-owned skill under `.agents/skills/om-customize-workflow/` or `.claude/skills/om-customize-workflow/`, or `skills-lock.json`). Design acceptance and process changes need a human merge. `om-auto-merge-triage` must not propose them. Maintainer decision, #35.
 
 Mode and independent review come from `.ai/agentic.config.json`:
 `automerge.mode` defaults to `prepare-and-merge`, and
@@ -283,7 +283,7 @@ short `Verified` SHAs uniquely to the exact current head. Keep limitations
 visible, add no `qa-approved`/`qa-self-verified`, and skip duplicate QA attempts.
 Newer trusted FAIL, revocation/deletion or head changes invalidate this evidence.
 This automerge signal exception leaves standalone QA and other merge skills'
-manual-approval gates unchanged.
+manual-approval gates unchanged. Excluded in this repository: see § The QA gate (#35).
 
 ## The QA gate
 
