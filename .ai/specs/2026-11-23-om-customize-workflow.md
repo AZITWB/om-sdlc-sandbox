@@ -1,5 +1,6 @@
 # om-customize-workflow: planned workflow changes and overlay audit
 
+Status: Accepted
 Source issue: #30
 Extends: `.ai/specs/2026-11-11-issue-first-sdlc-adaptation.md`
 Prototype implementation: #29 (evidence of intended behavior, not the design authority)
