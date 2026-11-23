@@ -32,3 +32,4 @@ The OM skills' config loader also requires `jq` on `PATH`.
 - Review rules: `CODE_REVIEW.md`
 - Protected surfaces: `BACKWARD_COMPATIBILITY.md`
 - Pipeline config: `.ai/agentic.config.json`
+- Reusable read-only prompts (e.g. process drift review): `docs/prompt-toolbox/`
