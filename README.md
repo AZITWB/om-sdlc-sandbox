@@ -1,21 +1,23 @@
 # om-sdlc-sandbox
 
-Pracownia do budowania workflow SDLC na skillach [open-mercato/skills](https://github.com/open-mercato/skills), przed przeniesieniem go do repo produktowego.
+Pracownia do budowania workflow SDLC na skillach [open-mercato/skills](https://github.com/open-mercato/skills), przed przeniesieniem go do repo produktowego. Zasady pracy dla agentów są w [AGENTS.md](AGENTS.md).
 
 ## Zawartość
 
 | Ścieżka | Co to jest |
 |---|---|
-| `.agents/skills/om-*` | skille z `open-mercato/skills` (wersje w `skills-lock.json`); `.claude/skills/om-*` to junctions do nich |
-| `.agents/skills/om-customize-workflow/` | własny skill: zmiany workflow przez config i overlaye w `.ai/skills/`, audyt overlayów po aktualizacji |
-| `.claude/skills/` (bez `om-`) | skille z `mattpocock/skills` |
-| `docs/issue_first_sdlc_feature_brief.md` | brief adaptacji Issue-First |
-| `docs/om-customize-workflow-example.md` | instalacja `om-customize-workflow` w repo produktowym, walidacja istniejących overlayów i przykład zmiany (design gate dla UI) |
+| [SDLC.md](SDLC.md), [SDLC-routes.md](SDLC-routes.md) | proces: kategorie, trasy, Definition of Ready, bramki |
+| [.ai/agentic.config.json](.ai/agentic.config.json) | config pipeline'u czytany przez skille |
+| `.ai/skills/<skill>/SKILL.md` | overlaye: zmiany zainstalowanych skilli specyficzne dla tego repo |
+| `.ai/specs/` | specki i briefy, w tym [brief Issue-First](.ai/specs/briefs/2026-11-11-issue-first-sdlc.md) |
+| `.agents/skills/om-*` | skille z `open-mercato/skills` (wersje w `skills-lock.json`); `.claude/skills/om-*` to te same skille dla Claude Code (lokalnie junctions) |
+| `.agents/skills/om-customize-workflow/` | własny skill: zmiany workflow przez config i overlaye, audyt overlayów po aktualizacji skilli |
+| [docs/om-customize-workflow-example.md](docs/om-customize-workflow-example.md) | instalacja `om-customize-workflow` w innym repo, walidacja istniejących overlayów i przykład zmiany (design gate dla UI) |
 
 ## Szybki start w repo produktowym
 
 1. `npx skills add open-mercato/skills`, potem `/om-setup-agent-pipeline`.
-2. Skopiuj `.agents/skills/om-customize-workflow/` i dodaj junction w `.claude/skills/` (polecenia w `docs/om-customize-workflow-example.md`, sekcja 1).
+2. Skopiuj `.agents/skills/om-customize-workflow/` i dodaj go w `.claude/skills/` (polecenia w przykładzie, sekcja 1).
 3. `/om-customize-workflow --audit`, czyli sprawdzenie istniejących overlayów.
 4. `/om-customize-workflow <zmiana>`, czyli zaplanowanie i zapisanie zmiany workflow.
 
