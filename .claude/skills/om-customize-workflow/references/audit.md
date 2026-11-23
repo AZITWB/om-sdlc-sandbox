@@ -5,7 +5,7 @@ Checks that every overlay still fits its installed base. Loaded by `om-customize
 ## Script
 
 ```bash
-SKILLS_ROOT=${SKILLS_ROOT:-.agents/skills}
+: "${SKILLS_ROOT:?set SKILLS_ROOT per references/agentic-setup.md}"
 for ov in .ai/skills/*/SKILL.md; do
   [ -f "$ov" ] || { echo "no overlays"; break; }
   name=$(basename "$(dirname "$ov")")
@@ -15,14 +15,15 @@ for ov in .ai/skills/*/SKILL.md; do
   ov_lines=$(wc -l < "$ov"); base_lines=$(wc -l < "$base")
   [ $((ov_lines * 2)) -lt "$base_lines" ] || echo "fork         $name: $ov_lines of $base_lines lines"
   grep -n '^Base: ' "$ov" | while IFS= read -r line; do
-    heading=${line#*Base: }
-    grep -rqF -- "$heading" "$SKILLS_ROOT/$name" || echo "stale-anchor $name: '$heading' not found in base"
+    heading=$(printf '%s' "${line#*Base: }" | tr -d '\r' | sed 's/[[:space:]]*$//')
+    case "$heading" in \#*) ;; *) echo "bad-anchor   $name: '$heading' is not a markdown heading"; continue ;; esac
+    grep -rqxF --include='*.md' -- "$heading" "$SKILLS_ROOT/$name" || echo "stale-anchor $name: '$heading' not found in base"
   done
   grep -q '^Base: ' "$ov" || echo "no-anchors   $name: add Base: lines to each delta section"
 done
 ```
 
-Anchors resolve against the whole installed skill directory, so a step that moved into `references/` still counts.
+An anchor must equal a whole heading line (level included, e.g. `## Rules`), so a heading that was renamed, demoted, or merged fails. It may live anywhere in the installed skill directory, so a step that moved into `references/` still counts. A numbered workflow step without its own heading is anchored by its nearest enclosing heading (usually `## Workflow`), and the overlay's section title names the step.
 
 ## Manual checks (read each overlay)
 
@@ -37,6 +38,7 @@ Anchors resolve against the whole installed skill directory, so a step that move
 | `ok` | all checks pass | none |
 | `stale-anchor` | a `Base:` heading no longer exists | re-anchor to the renamed step, or drop the section if the step is gone |
 | `no-anchors` | older overlay without `Base:` lines | add them from the current base headings |
+| `bad-anchor` | `Base:` value is not a heading line | anchor to the nearest enclosing heading |
 | `fork` | overlay ≥ 50% of base | push into config/upstream, or rename as its own skill |
 | `orphan` | base skill not installed | install it or delete the overlay |
 | `frontmatter` | overlay starts with `---` | normalize to the banner shape |
