@@ -32,7 +32,7 @@ Evidence from this repository:
 | # | Question | Chosen answer | Rationale |
 |---|---|---|---|
 | Q1 | Split customize and audit into separate specs or skills? | No. One skill, with `--audit` as a read-only mode. | Same domain and same contract. This mirrors `om-spec-writing`, which both writes and reviews. One skill is less new surface than two. |
-| Q2 | Is a repo-owned skill allowed under D12, which limits skill changes to repo-local extensions? | Yes, as a new decision **D21** that extends D12. D21 allows one repo-owned tooling skill. It writes only extensions, config, and `SDLC.md`, and adds no gate. ⚠ NEEDS HUMAN CONFIRMATION | D12 says "Later additions … are considered case by case". This spec is that case, but only the Maintainer can extend an active decision. |
+| Q2 | Is a repo-owned skill allowed under D12, which limits skill changes to repo-local extensions? | Yes, as a new decision **D21** that extends D12. D21 allows one repo-owned tooling skill. It writes only extensions, config, and `SDLC.md`, and adds no gate. Confirmed by the Maintainer on 2026-11-23 (#31). | D12 says "Later additions … are considered case by case". This spec is that case, but only the Maintainer can extend an active decision. |
 | Q3 | Header shape: the upstream banner (`> **Repo-local override.** …`) or this repo's accepted header (`# <skill>: repo-local extension` plus the "Installed skill: …" line, adaptation spec § Extension files: common header)? | Audit accepts both. New extensions written in this repo use the repo's accepted header. | The accepted spec wins locally. Accepting both keeps the skill portable to repositories that follow upstream. |
 | Q4 | How does an extension point at the text it changes? | Each delta section starts with `Base: <exact heading line>`, a heading anywhere in the installed skill directory. Prose pointers stay allowed next to it. | One machine-checkable line per section. It is additive, so existing extensions stay valid until migrated. |
 | Q5 | Where does the skill live? | `.agents/skills/om-customize-workflow/` plus the `.claude/skills/` copy, as for the vendored skills, but not in `skills-lock.json`. | No lockfile change (AGENTS.md). The skill stays visible to every agent the vendored skills reach. |
@@ -126,14 +126,14 @@ The skill performs no tracker operations. At run time it reads installed skills 
 
 ## 📝 Risks & Impact Review
 
-- **D12 boundary.** This is the first repo-owned skill. If D21 is not approved, the skill must not merge. Extensions could still be written by hand, but audit would have no home.
+- **D12 boundary.** This is the first repo-owned skill, allowed by D21. Any second repo-owned skill needs its own decision.
 - **Header divergence.** This repo's header differs from upstream's. Accepting both is reversible. Converging later is a separate decision.
 - **Example content.** The usage example in #29 uses a UI design gate, which D4 drops. The implementation must replace it with a change consistent with active decisions.
 - Rollback: delete the skill directory and its `.claude/skills/` copy. No config, label, or extension depends on it.
 
 ## 📋 Phasing
 
-**Precondition:** the Maintainer approves D21, and it is recorded in `.ai/specs/briefs/2026-11-11-issue-first-sdlc.md` before Phase 1 merges.
+**Precondition (met):** the Maintainer approved D21 on 2026-11-23, and it is recorded in `.ai/specs/briefs/2026-11-11-issue-first-sdlc.md`.
 
 - **Phase 1 — skill.** Audit mode first, because it is useful alone and is customize mode's gate. Then customize mode. Both adapt #29.
 - **Phase 2 — docs.** README entry and a usage example consistent with active decisions.
