@@ -17,6 +17,10 @@ The suggestions SHALL obey two rules:
 - WHEN `om-auto-manage-issues <n>` posts implementation-prep notes on a `bug`
 - THEN they end `Next: om-auto-fix-issue <n>`
 
+### Scenario: Dependencies prepared
+- WHEN `om-auto-manage-issues <n>` posts implementation-prep notes on a `dependencies` issue
+- THEN they end `Next: none` with the small-task route prose, never `om-auto-fix-issue`
+
 ### Scenario: Backlog filed
 - WHEN a real `om-backlog <spec>` run files a tree
 - THEN each story and task body has a `## ▶️ Start` section with its filled-in brief, epics have none, and the report ends `Next: none`
@@ -25,4 +29,4 @@ The suggestions SHALL obey two rules:
 - WHEN `om-backlog <spec> --dry-run` runs
 - THEN it ends `Next: om-backlog <spec>`
 
-Source: .ai/specs/2026-11-11-issue-first-sdlc-adaptation.md
+Source: .ai/specs/2026-11-11-issue-first-sdlc-adaptation.md; scenario "Dependencies prepared": #35

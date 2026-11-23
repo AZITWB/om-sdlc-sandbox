@@ -29,7 +29,7 @@ Shared rules:
 - Never run a suggested command.
 - A `Next:` line is one line: either `Next: none`, or a command that can be run exactly as written, with every `<n>` replaced by a real number. Never emit a placeholder or a multi-line brief in a `Next:` line.
 - An issue is a **backlog item** when its body has `Backlog source:` and an `Epic:` or `Story:` line. This rule wins over the category label. An issue with `Backlog source:` and neither line is an **epic**, and gets no command.
-- `bug`, `security`, and `dependencies` keep the native hint.
+- `bug` and `security` keep the native hint. `dependencies` follows the small-task route, like `refactor`.
 
 ### om-prepare-issue
 - **Issue body:** where the native body suggests `om-auto-fix-issue <n>`, write instead: "Next: triage (`om-auto-manage-issues <n>`), then the `<category>` route in `SDLC.md` § Routes."

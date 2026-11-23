@@ -24,6 +24,10 @@ The system SHALL refuse a change that relaxes a native check (QA gate, risk-high
 - WHEN the change adds a UI design gate
 - THEN the skill cites D4 and proposes a superseding entry for the Maintainer instead of writing an extension
 
+### Scenario: Decision entry proposed, not written
+- WHEN a change needs a new or superseding decision entry
+- THEN the plan contains the entry text for its owner to record, and the skill writes nothing under `.ai/specs/`
+
 ## Requirement: Extensions are audited against their installed base
 The system SHALL report, for each `.ai/skills/*/SKILL.md`, one or more of `ok`, `stale-anchor`, `no-anchors`, `bad-anchor`, `fork`, `orphan`, `frontmatter`, `unbannered`, `unsafe`, `conflict`, with the fix, and SHALL change nothing.
 
@@ -39,4 +43,4 @@ The system SHALL report, for each `.ai/skills/*/SKILL.md`, one or more of `ok`, 
 - WHEN `--audit` runs in a repository without `.ai/agentic.config.json`
 - THEN it warns and still audits
 
-Source: `.ai/specs/2026-11-23-om-customize-workflow.md`
+Source: `.ai/specs/2026-11-23-om-customize-workflow.md`; scenario "Decision entry proposed, not written": #35
