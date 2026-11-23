@@ -31,7 +31,7 @@ Shared rules:
 - Never run a suggested command.
 - A `Next:` line is one line: either `Next: none`, or a command that can be run exactly as written, with every `<n>` replaced by a real number. Never emit a placeholder or a multi-line brief in a `Next:` line.
 - An issue is a **backlog item** when its body has `Backlog source:` and an `Epic:` or `Story:` line. This rule wins over the category label. An issue with `Backlog source:` and neither line is an **epic**, and gets no command.
-- `bug`, `security`, and `dependencies` keep the native hint.
+- `bug` and `security` keep the native hint. `dependencies` follows the small-task route, like `refactor`.
 
 ### om-auto-manage-issues
 
@@ -43,8 +43,8 @@ Shared rules:
 | Category | `Next:` line | Added prose |
 |---|---|---|
 | `feature` | `Next: om-auto-write-spec <n>` | "or `om-spec-writing` for a co-designed spec" |
-| `refactor`, `documentation`, `chore` | `Next: none` | "Small: `om-auto-create-pr` with the task brief template in `SDLC.md` § Routes. Large: comment 'needs a spec (large)' and follow the feature route." |
+| `refactor`, `documentation`, `chore`, `dependencies` | `Next: none` | "Small: `om-auto-create-pr` with the task brief template in `SDLC.md` § Routes. Large: comment 'needs a spec (large)' and follow the feature route." |
 | `idea` | `Next: none` | "A human re-categorizes or closes this idea." |
 | backlog item | `Next: none` | "Start it with the command in its body." |
 
-**Run report and batch table.** The installed skill says to hand a prepped issue to `om-auto-fix-issue`. Its run report's `Next:` line and the batch table's *Next action* column use the same per-category mapping as the implementation-prep comment above. They name `om-auto-fix-issue` only for `bug`, `security`, and `dependencies`.
+**Run report and batch table.** The installed skill says to hand a prepped issue to `om-auto-fix-issue`. Its run report's `Next:` line and the batch table's *Next action* column use the same per-category mapping as the implementation-prep comment above. They name `om-auto-fix-issue` only for `bug` and `security`.

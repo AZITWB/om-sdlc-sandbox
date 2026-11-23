@@ -119,7 +119,7 @@ Base: ## Workflow
 - In step 5, when `.ai/specs/briefs/*.md` holds a decision table, add one line `Decisions touched: D<n>, …` to the issue body, naming the active entries the ticket relies on, or `none`.
 ```
 
-D22 goes into the brief's decision table in the same change.
+The Maintainer records D22 in the brief's decision table. The skill only proposes the text, because D21 does not let it write under `.ai/specs/`.
 
 ### Steps 5–6: gate and report
 

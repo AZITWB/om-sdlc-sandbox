@@ -36,7 +36,7 @@ An overlay never weakens these; only the listed config key (or a maintainer-owne
 A workflow change is checked against every active decision (`references/agentic-setup.md` step 5) before any mechanism is chosen.
 
 - A change that builds what a decision or non-goal excludes, or reverses a decision, is refused. Quote the entry and its id. Example: a UI design gate contradicts a decision that dropped design gates (D4 in this repository's Issue-First brief).
-- The way forward is never a quieter overlay. The plan proposes a superseding entry: new id, the entry it supersedes, and the owner who must approve it. Nothing is written until that owner confirms, and the entry is recorded in the same change.
+- The way forward is never a quieter overlay. The plan proposes a superseding entry: new id, the entry it supersedes, and the owner who must approve it. Nothing is written until that owner confirms. The skill never writes the decision table itself, because D21 limits it to extensions, config and `SDLC.md`: the plan hands the entry text to the owner, who records it.
 - A decision may limit the overlays themselves. D12 in this repository lists the allowed extensions and treats later additions case by case. Under such a decision, a new overlay or a new rule in an existing one is itself a new entry: the plan proposes it, and nothing is written before the owner confirms.
 - An entry past its review-by date is flagged in the plan, never enforced blindly.
 
