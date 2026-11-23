@@ -1,12 +1,12 @@
-# om-customize-workflow: przykład użycia w repo produktowym
+# om-customize-workflow: usage example
 
-Instrukcja krok po kroku: jak zainstalować `om-customize-workflow` w docelowym repo, zwalidować to, co już tam jest, i wprowadzić pierwszą zmianę workflow.
+Step by step: install `om-customize-workflow` in a product repository, validate what is already there, and make a first workflow change. Design authority: `.ai/specs/2026-11-23-om-customize-workflow.md` (accepted).
 
-Przykłady oparte są na prawdziwych nagłówkach zainstalowanych skilli (stan z `skills-lock.json` w `om-sdlc-sandbox`). Przykładowe overlaye z sekcji 4 przeszły bramkę overlay i audyt kotwic na tej wersji skilli. To nie jest zapis przebiegu na prawdziwym repo: wyniki u ciebie będą zależeć od jego configu i istniejących plików.
+The examples use the real headings of the installed skills (versions in `skills-lock.json`) and this repository's real extensions and decisions. The audit output in section 2 is the actual result on `main` after the spec was accepted. The proposed extension in section 4 passed the audit against the installed skills. Sections 3–5 are walkthroughs of the plan stage, not recorded runs.
 
-## 1. Instalacja w docelowym repo
+## 1. Installation in a target repository
 
-Skill nie jest jeszcze w żadnej kolekcji, więc na razie kopiujesz go ręcznie, tak samo jak w sandboxie: pliki w `.agents/skills/`, junction w `.claude/skills/`.
+The skill is not in any collection yet, so you copy it by hand into the same place as here: the files go in `.agents/skills/`, with a junction in `.claude/skills/`.
 
 ```powershell
 $src = "C:\DEV\om-sdlc-sandbox\.agents\skills\om-customize-workflow"
@@ -14,176 +14,144 @@ Copy-Item $src -Destination .agents\skills\ -Recurse
 New-Item -ItemType Junction -Path .claude\skills\om-customize-workflow -Target "$PWD\.agents\skills\om-customize-workflow"
 ```
 
-Wymagane obok niego (zwykle już są po `npx skills add open-mercato/skills`): `om-create-skill` (szablon i bramka overlay) oraz `om-setup-agent-pipeline` (lista kluczy configu, `skill-coverage.md`).
+It needs these alongside it (usually present after `npx skills add open-mercato/skills`):
+- `om-create-skill`, for the overlay template and gate;
+- `om-setup-agent-pipeline`, for the config key list and `skill-coverage.md`.
 
-Jeśli repo nie ma jeszcze `.ai/agentic.config.json`, najpierw:
+If the target repository has a decision that limits skill changes (D12 here), adding this skill needs its own entry there too. In this repository that entry is D21.
 
-```
-/om-setup-agent-pipeline
-```
-
-## 2. Walidacja tego, co już istnieje
+## 2. Validating what already exists
 
 ```
 /om-customize-workflow --audit
 ```
 
-Audyt tylko czyta. Działa też bez configu: wtedy w raporcie jest ostrzeżenie. Sprawdza każdy plik `.ai/skills/*/SKILL.md` względem zainstalowanego skilla o tej samej nazwie.
+The audit only reads, and it also runs without config. For each `.ai/skills/*/SKILL.md` it reports the status against the installed skill of the same name. It accepts two header shapes: the upstream banner `> **Repo-local override.** …` and this repository's `# <skill>: repo-local extension`.
 
-Przykładowy raport dla repo z dwoma starszymi overlayami:
+Result on `main` (four Issue-First extensions):
 
 ```markdown
-🔍 `om-customize-workflow --audit`: 2 need attention, 0 ok.
+🔍 `om-customize-workflow --audit`: 4 need attention, 0 ok.
 
 | Overlay | Status | Fix |
 |---|---|---|
-| `om-code-review` | `no-anchors` | add `Base: ## Severity and Verdict` to the severity section |
-| `om-prepare-test-env` | `frontmatter`, `fork` (148 of 210 lines) | drop frontmatter; move ports and seeded accounts to config or keep only the delta |
+| `om-auto-manage-issues` | `fork` (50 of 84 lines), `no-anchors` | move the shared "Category list" / "Next-step hints" rules to one source; add `Base:` lines |
+| `om-prepare-issue` | `no-anchors` | add `Base: ## Workflow` to each delta section |
+| `om-backlog` | `no-anchors` | add `Base:` lines |
+| `om-brainstorm` | `no-anchors` | add `Base:` lines |
 ```
 
-Co zrobić z każdym statusem:
+What to do with each status:
 
-| Status | Znaczenie | Poprawka |
+| Status | Meaning | Fix |
 |---|---|---|
-| `ok` | wszystko pasuje | nic |
-| `no-anchors` | starszy overlay bez linii `Base:` | dopisać `Base: <nagłówek bazy>` na początku każdej sekcji |
-| `stale-anchor` | nagłówek bazy zmienił się lub zniknął | wskazać nowy nagłówek albo usunąć sekcję |
-| `bad-anchor` | `Base:` nie jest nagłówkiem markdown | wskazać najbliższy nagłówek nad krokiem, zwykle `## Workflow` |
-| `fork` | overlay ma co najmniej 50% długości bazy | przenieść do configu, upstream albo osobnego skilla |
-| `orphan` | brak zainstalowanego skilla bazowego | doinstalować skill albo usunąć overlay |
-| `frontmatter` | overlay zaczyna się od `---` | zamienić na baner `> **Repo-local override.** …` |
-| `unsafe` | osłabia chronioną bramkę | usunąć dyrektywę; jeśli bramkę kontroluje klucz configu, użyć klucza |
+| `ok` | everything fits | nothing |
+| `no-anchors` | overlay without `Base:` lines | add `Base: <base heading>` at the start of each section |
+| `stale-anchor` | the base heading changed or disappeared | point at the new heading, or remove the section |
+| `bad-anchor` | `Base:` is not a markdown heading | point at the nearest heading above the step |
+| `fork` | overlay is at least 50% of the base's length | move shared text to config or upstream, or split it |
+| `orphan` | no installed base skill | install the skill or remove the overlay |
+| `frontmatter` | overlay starts with `---` | replace it with an accepted header |
+| `unbannered` | first line is neither accepted header | add the header the repository uses |
+| `unsafe` | weakens a protected check | remove the directive; use the config key if one exists |
+| `conflict` | two overlays contradict each other | align them in one change |
 
-Overlaye, które istniały przed tym skillem, prawie zawsze dostaną `no-anchors`. To normalne. Dopisz kotwice w jednym commicie i uruchom audyt jeszcze raz.
+Overlays that existed before this skill will almost always get `no-anchors`. That is expected. Add the anchors in one change and run the audit again.
 
-## 3. Przykład A: zmiana, której nie trzeba robić
+## 3. Example A: a change that is not needed
 
 ```
-/om-customize-workflow Bugi nie wymagają specyfikacji, tylko featury.
+/om-customize-workflow Bugs do not require a specification, only features do.
 ```
 
-Krok 1 (klasyfikacja) sprawdza, jak to działa dziś. `om-auto-fix-issue` już teraz prowadzi bugi trasą verify → root-cause → fix → open-pr i speckę pisze tylko na trasie feature (krok 3, `references/feature-route.md`). Wynik:
+Classification checks how it works today. `SDLC.md` § Routes already routes bugs through `om-auto-fix-issue` with no spec, and features always go through a spec (D6). Result:
 
 ```markdown
 ✅ `om-customize-workflow`: already applied.
-Bugs already skip the spec: `om-auto-fix-issue` routes bugs through the autofix chain and writes a spec only on the feature route. No overlay or config change needed.
+Bugs already skip the spec (`SDLC.md` § Routes, D6). No extension or config change needed.
 **Next:** no action needed.
 ```
 
-Wniosek: zanim napiszesz overlay, warto zapytać, czy upstream już tak nie działa. Część punktów briefu Issue-First prawdopodobnie jest już domyślna.
-
-## 4. Przykład B: design gate dla zmian w UI
+## 4. Example B: a new rule that needs a decision first
 
 ```
-/om-customize-workflow Zmiana w UI wymaga zaakceptowanego mocka (stany: default, empty, error, 360px) przed implementacją. Review blokuje PR bez akceptacji.
+/om-customize-workflow Issues filed by om-prepare-issue list the active decisions (D-entries) the ticket relies on.
 ```
 
-### Krok 1: klasyfikacja
+### Step 1: classification
 
-- Nie osłabia bramek, tylko dodaje nową. To dozwolone.
-- Config nie ma na to klucza. `SDLC.md` ma etap Design, ale nic go nie egzekwuje, a 360px nie jest nigdzie zapisane.
-- Werdykt: overlaye plus zmiana w `SDLC.md`.
+- It weakens no check; it adds one body line.
+- No config key covers it.
+- **Active decisions:** D12 limits extensions to two, categories and next-step hints, and says later additions are decided case by case. A new rule is therefore a new entry.
 
-### Krok 2: mapa wpływu
+Verdict: overlay, plus a proposed decision for the Maintainer.
 
-Z `routing.md` § Chains, etap „Design / mock gate”. Zasada „silnik przed wywołującymi”: blokada implementacji idzie do `om-auto-implement-spec`, bo `om-auto-fix-issue` na trasie feature i tak go woła. Reguła review idzie do `om-code-review`, którego używają `om-auto-review-pr` i `om-review-prs`.
+### Step 2: impact map
 
-### Krok 3: plan (skill zatrzymuje się tutaj i czeka na potwierdzenie)
+The stage is intake. `om-backlog` already passes "Decisions in play" from the spec, so only `om-prepare-issue` needs the rule. `om-auto-manage-issues` is not touched, which matters because its overlay is a `fork`.
+
+### Step 3: plan (the skill stops here and waits)
 
 ```markdown
-📋 `om-customize-workflow` plan: UI changes need an accepted mock (default, empty, error, 360px) before implementation; review blocks without it.
-Mechanism: overlays.
+📋 `om-customize-workflow` plan: issues filed by `om-prepare-issue` list the decisions they rely on.
+Mechanism: overlay, plus a new decision.
 
 | Skill | Base heading | Action | Why |
 |---|---|---|---|
-| `om-auto-implement-spec` | `## Workflow` | extend | stop before implementing a UI spec without an accepted prototype |
-| `om-code-review` | `## Severity and Verdict` | add | missing accepted design on a UI PR is a blocker |
-| `om-auto-qa-pr` | `## Workflow` | extend | narrow-viewport state runs at 360px |
+| `om-prepare-issue` | `## Workflow` | extend | step 5 adds a `Decisions touched:` body line |
 
+Decision: propose D22 — "`om-prepare-issue` adds a `Decisions touched:` line" — extending D12, owner Maintainer.
 Config: no change.
-SDLC.md: Design stage row — accepted mock with the four states is required; done when acceptance is recorded next to `Prototype:`.
-Upstream slot: a `design.requiredStates` config key read by these three skills would replace all three overlays.
+SDLC.md: no change (the Definition of Ready is unchanged).
+Upstream slot: `om-prepare-issue` already cites ids from `product-brief.md`; reading decision tables from briefs would replace this overlay.
 **Confirm to write.**
 ```
 
-Odpowiedz „tak” albo popraw plan. Z `--dry-run` skill kończy w tym miejscu.
+### Step 4: written after confirmation
 
-### Krok 4: zapisane pliki
-
-`.ai/skills/om-auto-implement-spec/SKILL.md` (8 linii, baza ma 60):
+The new section is appended to `.ai/skills/om-prepare-issue/SKILL.md`. The overlay grows from 37 to 43 lines, against a base of 91:
 
 ```markdown
-> **Repo-local override.** Adds a design-acceptance stop before implementing a user-facing spec.
-
-## Workflow — step 1, resolve the spec (extend)
+## Decisions touched (adds a body line)
 
 Base: ## Workflow
 
-- After the spec resolves, when it describes a user-facing change, require a `Prototype:` line pointing at an accepted design that covers the default, empty, error, and 360px-wide states, with the acceptance evidence named next to it.
-- Missing, unaccepted, or incomplete → stop before step 2 with `Status: blocked` and `⚠ NEEDS HUMAN CONFIRMATION: design not accepted`, naming the missing states. Never implement around it.
+- In step 5, when `.ai/specs/briefs/*.md` holds a decision table, add one line `Decisions touched: D<n>, …` to the issue body, naming the active entries the ticket relies on, or `none`.
 ```
 
-`.ai/skills/om-code-review/SKILL.md` (7 linii, baza ma 167):
+D22 goes into the brief's decision table in the same change.
+
+### Steps 5–6: gate and report
+
+The extended overlay passes the audit: the header is accepted, it is 43 of 91 lines, and the anchor resolves. The report lists the changes and leaves them uncommitted. Deliver them through the repository's normal route: an issue, then `om-auto-create-pr`, because `.ai/skills/` is never a trivial change.
+
+## 5. Example C: a refused change
+
+```
+/om-customize-workflow A UI change needs an accepted mock (default, empty, error, 360px) before implementation; review blocks without it.
+```
 
 ```markdown
-> **Repo-local override.** Makes a missing accepted design a blocker on user-facing PRs.
-
-## Severity and Verdict (add)
-
-Base: ## Severity and Verdict
-
-- A PR that changes a user-facing screen or flow without a linked spec `Prototype:` covering the default, empty, error, and 360px states, with recorded acceptance, is a **blocker** ("design not accepted"). Docs-only, test-only, and non-UI changes are exempt.
+⛔ `om-customize-workflow`: refused — contradicts D4.
+D4 dropped UI design gates because native mechanisms cover them (Design stage, `Prototype:`, QA state matrix).
+To pursue it, propose a decision that supersedes D4, with the Maintainer as owner; the skill then plans the overlays against the new entry.
+**Next:** none.
 ```
 
-`.ai/skills/om-auto-qa-pr/SKILL.md` (7 linii, baza ma 283):
-
-```markdown
-> **Repo-local override.** Pins this repository's narrow viewport to 360px.
-
-## Workflow — state matrix (extend)
-
-Base: ## Workflow
-
-- Exercise the narrow-viewport state of the state matrix at 360px width and record the width in the evidence.
-```
-
-`SDLC.md`, wiersz Design w tabeli Ticket lifecycle, kolumna „Done when”: dopisane „zaakceptowany mock ze stanami default, empty, error i 360px, akceptacja zapisana obok `Prototype:`”.
-
-Zwróć uwagę na kształt każdego overlaya:
-- pierwsza linia to baner;
-- tytuł sekcji mówi, którą część bazy zmienia i jak (`add`, `extend`, `replace`);
-- pierwsza linia sekcji to `Base:` z dokładnym nagłówkiem bazy;
-- nic z bazy nie jest przepisane.
-
-### Krok 5: bramka
-
-Skill uruchamia bramkę overlay z `om-create-skill/references/overlay-contract.md` (baner, brak frontmattera, poniżej 50% bazy) i skrypt z `references/audit.md` (kotwice). Dla tych trzech plików: zero zgłoszeń.
-
-### Krok 6: raport
-
-```markdown
-✅ `om-customize-workflow`: applied, left uncommitted.
-3 overlays and the SDLC.md Design stage — UI specs now stop before implementation without an accepted 360px-ready mock, and review blocks UI PRs that lack one.
-Checked: overlay gate and anchors pass.
-**Next:** review and commit the diff; propose `design.requiredStates` upstream.
-```
-
-Zmiany zostają niezacommitowane. Przejrzyj diff i zacommituj sam albo poproś o dostarczenie przez `om-auto-create-pr`. Wtedy zmiana procesu przejdzie przez zwykłe review PR.
-
-## 5. Po aktualizacji skilli
+## 6. After updating skills
 
 ```
 /om-apply-upgrade-notes
 /om-customize-workflow --audit
 ```
 
-`om-apply-upgrade-notes` aktualizuje deskryptory i config, ale nie sprawdza overlayów. Drugi krok wyłapuje nagłówki bazy, które zmieniły nazwę albo zniknęły (`stale-anchor`).
+`om-apply-upgrade-notes` updates descriptors and config, but not overlays. The audit catches base headings that were renamed or removed (`stale-anchor`).
 
-## 6. Checklista przed commitem zmiany workflow
+## 7. Checklist before committing a workflow change
 
-- [ ] `--audit` bez zgłoszeń dla zmienionych overlayów.
-- [ ] Każda reguła z zamówionej zmiany ląduje w konkretnym overlayu albo kluczu configu.
-- [ ] Reguła jest w silniku (`om-code-review`, `om-auto-implement-spec`), a nie w każdym skillu, który go woła.
-- [ ] `SDLC.md` mówi to samo co overlaye.
-- [ ] Nic nie osłabia chronionych bramek (`routing.md` § Protected gates).
-- [ ] W raporcie jest propozycja slotu upstream, jeśli zmiana miałaby sens w innym repo.
+- [ ] `--audit` reports nothing for the changed overlays.
+- [ ] Every rule of the requested change lands in a specific overlay or config key.
+- [ ] The rule sits in the engine skill, not in every skill that calls it.
+- [ ] `SDLC.md` and the decision table say the same as the overlays.
+- [ ] Nothing weakens a protected check, and nothing contradicts an active decision without a superseding entry.
+- [ ] The report proposes an upstream slot when the change would make sense in another repository.
