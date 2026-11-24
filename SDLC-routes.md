@@ -26,7 +26,7 @@ flowchart TD
     need([Need or change]) --> trivialQ{{"Trivial?<br/>see Trivial changes"}}
     trivialQ -- yes --> trivialRun("om-auto-create-pr with the task, no issue")
     trivialRun --> trivialPR["PR: documentation or refactor + skip-qa"]
-    trivialPR --> merge
+    trivialPR --> pr
 
     trivialQ -- no --> brainstorm("optional: om-brainstorm")
     brainstorm --> intake("om-prepare-issue --no-spec")
@@ -81,7 +81,8 @@ flowchart TD
 | idea | any spec or implementation command |
 | feature | `om-auto-fix-issue`, `om-prepare-issue` without `--no-spec`, triage with `--write-missing-specs` |
 | backlog item | `om-auto-fix-issue`, `om-auto-implement-spec`, `om-auto-create-pr --spec`, or any brief naming the parent spec |
-| refactor, documentation, chore | `om-auto-fix-issue` |
+| refactor, documentation, chore, dependencies (small) | `om-auto-fix-issue` |
+| refactor, documentation, chore (large) | as feature |
 
 ## 2. PR path: tests and QA
 
@@ -107,7 +108,7 @@ flowchart TD
     signoff -- pass --> approved("QA reviewer applies qa-approved<br/>+ comment with QA head: sha<br/>self-QA also adds qa-self-verified")
     approved -.- stale["Push after QA head: the label stays but is stale;<br/>om-approve-merge-pr asks to confirm, or QA re-tests"]
     approved --> qaGate[/"QA gate: needs-qa merges only with qa-approved"/]
-    qaGate --> merge{{"Merge: om-approve-merge-pr or a human<br/>blocked by qa-failed, blocked, do-not-merge, or an active qa label"}}
+    qaGate --> merge{{"Merge: om-approve-merge-pr or a human,<br/>or om-auto-merge-buddy on a human-labeled automerge PR, never a spec or process PR<br/>blocked by qa-failed, blocked, do-not-merge, or an active qa label"}}
     merge --> mergedEnd([Merged: the process stops here])
     mergedEnd -.-> after("Optional, per window of merged PRs: om-auto-qa-scenarios<br/>installed skill, not in SDLC.md")
 
