@@ -101,7 +101,7 @@ Out of scope: <from #<n>>
 The PR body must contain: Closes #<n>"
 ```
 
-Source: `.ai/specs/2026-11-11-issue-first-sdlc-adaptation.md` (decisions D1–D20 in `.ai/specs/briefs/2026-11-11-issue-first-sdlc.md`).
+Source: `.ai/specs/2026-11-11-issue-first-sdlc-adaptation.md` (decisions D1–D21 in `.ai/specs/briefs/2026-11-11-issue-first-sdlc.md`).
 
 ## Definition of Ready
 
@@ -229,7 +229,7 @@ Two labels live outside this taxonomy, and only humans decide them (the automerg
   - `automerge-signal-2-qa` — QA is not required (`skip-qa`, or no `needs-qa`), or `qa-approved` is pinned to the current head by its `QA head:` line. Only `om-auto-qa-pr` may apply it through self-QA, on `risk-high` only under the explicit invocation-scoped risk override below.
   - `automerge-signal-3-ci` — every check on the current head finished green, with no conflicts.
 
-  On its first visit to a PR, when no signal is recorded yet, the buddy derives the initial signals from the PR's real state: its labels, reviews and comments, and its CI checks on the current head. It then starts from the first signal still missing, so review, QA or CI work already done is not repeated. A missing signal is produced by `om-auto-review-pr --autofix`, `om-auto-qa-pr`, or `om-auto-fix-pr`, each run with `--orchestrated` so the buddy alone owns the claim and the labels. CI that is still running is parked under `ci-monitoring` and checked again later. A PR that cannot be fixed within the attempt limit is parked under `automerge-blocked`; remove that label to retry. A fork PR is carried forward to a credited replacement that keeps the label. In `prepare-to-merge` mode, a PR with all three signals gets `merge-queue`. In `prepare-and-merge` mode (the missing-config default) it is squash-merged, bypassing other labels and host merge rules, because the three signals are the gate. The hard blocks are the exception: `blocked`, `do-not-merge`, `qa-failed` and an active `qa` label stop it before the merge, as in § The QA gate. Maintainer decision, #37. Removing `automerge` stops the automation.
+  On its first visit to a PR, when no signal is recorded yet, the buddy derives the initial signals from the PR's real state: its labels, reviews and comments, and its CI checks on the current head. It then starts from the first signal still missing, so review, QA or CI work already done is not repeated. A missing signal is produced by `om-auto-review-pr --autofix`, `om-auto-qa-pr`, or `om-auto-fix-pr`, each run with `--orchestrated` so the buddy alone owns the claim and the labels. CI that is still running is parked under `ci-monitoring` and checked again later. A PR that cannot be fixed within the attempt limit is parked under `automerge-blocked`; remove that label to retry. A fork PR is carried forward to a credited replacement that keeps the label. In `prepare-to-merge` mode, a PR with all three signals gets `merge-queue`. In `prepare-and-merge` mode (the missing-config default) it is squash-merged, bypassing other labels and host merge rules, because the three signals are the gate. The hard blocks are an exception, among the buddy's other human gates: `blocked`, `do-not-merge`, `qa-failed` and an active `qa` label stop it before the merge, as in § The QA gate. Maintainer decision, #37. Removing `automerge` stops the automation.
 
   Never apply `automerge` to a spec PR or a process PR (one that changes `SDLC.md`, `SDLC-routes.md`, `.ai/skills/`, `.ai/agentic.config.json`, `.ai/trackers/`, the repo-owned skill under `.agents/skills/om-customize-workflow/` or `.claude/skills/om-customize-workflow/`, or `skills-lock.json`). Design acceptance and process changes need a human merge. `om-auto-merge-triage` must not propose them. Maintainer decision, #35.
 
@@ -265,11 +265,16 @@ change risk labels or authorize claim takeover. The buddy passes the separate
 resume, strict gates apply and override-derived review/QA approvals cannot be
 reused as ordinary approvals. Standalone skill defaults are unchanged.
 
-**Maintainer only.** In this repository only the Maintainer runs
-`om-auto-merge-buddy --force`, and the recorded exception names them. That
-record is the maintainer's explicit exception § The QA gate requires on a
-`risk-high` PR; any other operator runs the buddy without `--force`.
-Maintainer decision, #37.
+**Maintainer only.** In this repository only the Maintainer waives risk
+checks, in any of the buddy's three forms: `--force`, its alias
+`--skip-risk-checks`, or the per-PR `automerge-force` label. Before the run,
+the Maintainer posts their own comment on the PR naming the exception: the
+head, the reason, and the form used. That comment, not the buddy's
+`Risk checks: skipped` record, is the maintainer's explicit exception § The QA
+gate requires on a `risk-high` PR. Any other operator runs the buddy without
+these forms. The override never reaches the buddy's protected areas
+(`om-auto-merge-buddy` `references/human-gates.md` §2), which still need a
+human QA sign-off. Maintainer decision, #37.
 
 The independent `--skip-pre-existing-ci-errors` flag permits only an individual
 completed CI failure proved identical on the exact current target SHA, using
@@ -303,7 +308,7 @@ The one hard rule of this process: **a PR carrying `needs-qa` must not merge unt
 - **No automerge exception.** The automerge signal-2 rule above, which accepts a trusted `om-auto-qa-pr` PASS without `qa-approved`, does not apply in this repository. An automerge PR carrying `needs-qa` also needs `qa-approved`. Maintainer decision, #35.
 - **`qa-approved` is pinned to a commit.** The comment that grants it — the QA reviewer's note, or the self-QA evidence comment — carries the line `QA head: <sha>` for the head that was tested. A push after that line leaves the label in place but stales it: `om-merge-buddy` reports "QA evidence older than head", and `om-approve-merge-pr` asks for confirmation before merging. The way back is a QA reviewer re-testing, or stating on the PR that the new commits do not touch the tested scope, with a fresh `QA head:` line.
 - **Self-QA exception**: when no QA reviewer has capacity in time, any engineer — or `om-auto-qa-pr --self-qa-signoff` — may sign off instead, on a `risk-low` or `risk-medium` PR only. The evidence attached to the PR names the scenario exercised, the environment, the test data, the observed result, the negative cases tried, and the `QA head:` line. Then apply both `qa-approved` (so the gate passes) and `qa-self-verified` (so the exception is auditable). No evidence, no `qa-approved`.
-- **No self-QA on `risk-high`.** A PR labeled `risk-high`, or one whose diff touches auth, sessions, data scoping, money, schema migrations, or shared contracts (the `risk-high` inference above), needs a QA reviewer, or a maintainer's explicit exception stated on the PR (for automerge, the Maintainer's `--force` run, § Explicit automerge risk override); `om-auto-qa-pr` withholds the sign-off on such a PR and posts the evidence only. A change to auth or money also needs a second person's review regardless of the QA path.
+- **No self-QA on `risk-high`.** A PR labeled `risk-high`, or one whose diff touches auth, sessions, data scoping, money, schema migrations, or shared contracts (the `risk-high` inference above), needs a QA reviewer, or a maintainer's explicit exception stated on the PR (for automerge outside the buddy's protected areas, the Maintainer's comment for a risk override, § Explicit automerge risk override); `om-auto-qa-pr` withholds the sign-off on such a PR and posts the evidence only. A change to auth or money also needs a second person's review regardless of the QA path.
 
 ## The claim protocol
 
