@@ -7,6 +7,7 @@ A prompt here is a lighter alternative to a skill. Use it when a task is occasio
 | Prompt | Use it when | Writes |
 |---|---|---|
 | [Process drift review](process-drift-review.md) | after a process change, before moving the workflow to another repository, or when the docs feel out of step | nothing (report only) |
+| [SDLC routing quiz](sdlc-routing-quiz.md) | after a change to `SDLC.md`, `.ai/skills/`, or the config: a few minutes' check that an agent reading the documents still picks the right next command, graded by a script | `.ai/qa/artifacts_sdlc-quiz/answers.txt` only (git-ignored) |
 | [SDLC canvas build](sdlc-canvas-build.md) | you want a GitHub Copilot app canvas that shows each open issue and PR on its route with the next allowed command | user-scoped canvas files only (`~/.copilot/extensions/sdlc-canvas/`); the canvas itself is read-only |
 
 Conventions for new prompts:
