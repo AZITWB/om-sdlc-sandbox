@@ -23,7 +23,7 @@ An overlay never weakens these; only the listed config key (or a maintainer-owne
 |---|---|
 | `needs-qa` blocks merge until `qa-approved` | `qaGate` |
 | `qa-approved` pinned to the tested head (`QA head:`) | none |
-| no self-QA on `risk-high`; risk-high evidence table | none (automerge `--force` is invocation-only) |
+| no self-QA on `risk-high`; risk-high evidence table | none (automerge `--force` is invocation-only; Maintainer-only where `SDLC.md` says so) |
 | review verdict rule: blocker or unwaived major → request changes | none |
 | validation gate: any non-zero exit blocks | `validation.commands` (the list, not the rule) |
 | claim protocol, lock release, `claim-reset` | none |
